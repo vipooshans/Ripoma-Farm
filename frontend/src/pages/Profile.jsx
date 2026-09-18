@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
@@ -9,11 +9,21 @@ import { ValidatedInput, PasswordInputWithMeter } from '../components/FormFields
 import { FarmStoryModal } from '../components/FarmStoryModal';
 import RipomaLogo from '../components/RipomaLogo';
 
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+const isGoogleClientConfigured =
+  Boolean(GOOGLE_CLIENT_ID) &&
+  !GOOGLE_CLIENT_ID.includes('your_google_client_id');
+
+/** JWT uses base64url without padding; browser btoa padding breaks jwt.decode. */
+const toBase64Url = (obj) =>
+  btoa(JSON.stringify(obj)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
 const Profile = () => {
   const { user, login, register, logout, updateProfile, loginWithGoogle } = useContext(AuthContext);
   const { showToast } = useContext(NotificationContext);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const googleInitRef = useRef(false);
 
   // Redirect check
   const redirectTarget = searchParams.get('redirect') || '';
@@ -74,38 +84,7 @@ const Profile = () => {
   // Invoice Modal
   const [activeInvoice, setActiveInvoice] = useState(null);
 
-  // Initialize Google Sign In
-  useEffect(() => {
-    if (user) return;
-
-    const initializeGoogle = () => {
-      if (window.google?.accounts?.id) {
-        window.google.accounts.id.initialize({
-          client_id: 'your_google_client_id_here',
-          callback: handleGoogleCredentialResponse,
-        });
-
-        const btnContainer = document.getElementById('google-signin-button');
-        if (btnContainer) {
-          window.google.accounts.id.renderButton(btnContainer, {
-            theme: 'outline',
-            size: 'large',
-            text: 'signin_with',
-            shape: 'rectangular',
-            width: '100%'
-          });
-        }
-      } else {
-        setTimeout(initializeGoogle, 1000);
-      }
-    };
-
-    if (isLoginTab) {
-      initializeGoogle();
-    }
-  }, [user, isLoginTab]);
-
-  const handleGoogleCredentialResponse = async (response) => {
+  const handleGoogleCredentialResponse = useCallback(async (response) => {
     setIsTransitioning(true);
     const res = await loginWithGoogle(response.credential);
     if (res.success) {
@@ -118,16 +97,62 @@ const Profile = () => {
       setIsTransitioning(false);
       showToast(res.message, 'error');
     }
-  };
+  }, [loginWithGoogle, showToast, redirectTarget, navigate]);
+
+  // Initialize Google Sign In (skip when client ID is a placeholder)
+  useEffect(() => {
+    if (user || !isLoginTab || !isGoogleClientConfigured) return;
+
+    let cancelled = false;
+    let retryTimer;
+
+    const initializeGoogle = () => {
+      if (cancelled || !window.google?.accounts?.id) {
+        if (!cancelled) retryTimer = setTimeout(initializeGoogle, 500);
+        return;
+      }
+
+      const btnContainer = document.getElementById('google-signin-button');
+      if (!btnContainer) return;
+
+      if (!googleInitRef.current) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleCredentialResponse,
+        });
+        googleInitRef.current = true;
+      }
+
+      btnContainer.innerHTML = '';
+      // GSI requires a numeric pixel width (200–400), not CSS percentages
+      const width = Math.min(400, Math.max(200, Math.floor(btnContainer.offsetWidth || 320)));
+      window.google.accounts.id.renderButton(btnContainer, {
+        theme: 'outline',
+        size: 'large',
+        text: 'signin_with',
+        shape: 'rectangular',
+        width,
+      });
+    };
+
+    initializeGoogle();
+
+    return () => {
+      cancelled = true;
+      clearTimeout(retryTimer);
+    };
+  }, [user, isLoginTab, handleGoogleCredentialResponse]);
 
   const handleSimulateGoogleLogin = async () => {
-    const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-    const payload = btoa(JSON.stringify({
-      email: "admin@ripomafarm.com",
-      name: "Google Admin Developer",
-      picture: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100"
-    }));
-    const mockToken = `${header}.${payload}.signature_placeholder`;
+    const mockToken = [
+      toBase64Url({ alg: 'HS256', typ: 'JWT' }),
+      toBase64Url({
+        email: 'admin@ripomafarm.com',
+        name: 'Google Admin Developer',
+        picture: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100',
+      }),
+      'signature_placeholder',
+    ].join('.');
 
     setIsTransitioning(true);
     setTimeout(async () => {
@@ -151,12 +176,13 @@ const Profile = () => {
         name: user.name || '',
         phone: user.phone || ''
       });
+      const savedAddress = user.address || user.addresses?.find((a) => a.isDefault) || user.addresses?.[0] || {};
       setAddressForm({
-        street: user.address?.street || '',
-        city: user.address?.city || '',
-        state: user.address?.state || '',
-        zipCode: user.address?.zipCode || '',
-        country: user.address?.country || 'USA'
+        street: savedAddress.street || '',
+        city: savedAddress.city || '',
+        state: savedAddress.state || '',
+        zipCode: savedAddress.zipCode || '',
+        country: savedAddress.country || 'USA'
       });
       fetchOrders();
       fetchNotifications();
@@ -514,7 +540,14 @@ const Profile = () => {
                     Quick Access
                   </div>
                   
-                  <div id="google-signin-button" className="w-full flex justify-center"></div>
+                  {isGoogleClientConfigured ? (
+                    <div id="google-signin-button" className="w-full flex justify-center" />
+                  ) : (
+                    <p className="text-center text-[10px] text-gray-400">
+                      Set <code className="text-[#2F4B3C]">VITE_GOOGLE_CLIENT_ID</code> in{' '}
+                      <code className="text-[#2F4B3C]">frontend/.env</code> to enable Google Sign-In.
+                    </p>
+                  )}
 
                   <button
                     type="button"

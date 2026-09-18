@@ -33,6 +33,20 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+From the **repo root**, load sample catalog, customers, orders, and workers:
+
+```bash
+npm run seed
+```
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Customer | `customer@ripomafarm.com` | `customer123` |
+| Admin | `admin@ripomafarm.com` | `Admin@1234` |
+| Worker | `worker@ripomafarm.com` | `Worker@1234` |
+
+Admin 2FA demo code is `123456`. Extra sample logins use the same customer password (`nimal@example.com`, `aisha@example.com`) or worker password (`maya@ripomafarm.com`, `kasun@ripomafarm.com`).
+
 | Script | What it does |
 | --- | --- |
 | `npm run dev` | Start Vite with hot reload |
@@ -68,5 +82,6 @@ Express API (:5000)  →  MongoDB (or JSON fallback)
 
 - Keep the **backend** running on port 5000 so catalog, cart, and checkout can load data.
 - From the repo root you can start both sides with `npm run dev` (uses `concurrently`).
+
 
 </details>
