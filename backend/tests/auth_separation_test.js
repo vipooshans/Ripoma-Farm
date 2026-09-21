@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = process.env.API_BASE_URL || 'http://127.0.0.1:5050';
 
 async function runTests() {
   console.log('🧪 Starting RIPOMA Farm - Admin vs Customer Separation Verification Suite\n');

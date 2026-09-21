@@ -20,7 +20,7 @@ Shop organic free-range chicken, pasture eggs, and solar-dried fish from **RIPOM
 | Fonts | Inter, Manrope, Fraunces, Caveat (Google Fonts) |
 | Auth (client) | Google Identity Services |
 
-The frontend talks to the Express API at `http://localhost:5000` through Vite’s `/api` proxy (dev server on **port 3000**).
+The frontend talks to the Express API at `http://127.0.0.1:5050` through Vite’s `/api` proxy (dev server on **port 3000**).
 
 ---
 
@@ -70,7 +70,7 @@ Admin 2FA demo code is `123456`. Extra sample logins use the same customer passw
 Browser (React + Vite :3000)
         │  /api  proxy
         ▼
-Express API (:5000)  →  MongoDB (or JSON fallback)
+Express API (:5050)  →  MongoDB (or JSON fallback)
 ```
 
 ### Vite plugins in this project
@@ -80,7 +80,7 @@ Express API (:5000)  →  MongoDB (or JSON fallback)
 
 ### Notes
 
-- Keep the **backend** running on port 5000 so catalog, cart, and checkout can load data.
+- Keep the **backend** running on port 5050 so catalog, cart, and checkout can load data.
 - From the repo root you can start both sides with `npm run dev` (uses `concurrently`).
 
 
