@@ -19,7 +19,7 @@ const toBase64Url = (obj) =>
   btoa(JSON.stringify(obj)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
 const Profile = () => {
-  const { user, login, register, logout, updateProfile, loginWithGoogle } = useContext(AuthContext);
+  const { user, loading: authLoading, login, register, logout, updateProfile, loginWithGoogle } = useContext(AuthContext);
   const { showToast } = useContext(NotificationContext);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -171,23 +171,22 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      setProfileForm({
-        name: user.name || '',
-        phone: user.phone || ''
-      });
-      const savedAddress = user.address || user.addresses?.find((a) => a.isDefault) || user.addresses?.[0] || {};
-      setAddressForm({
-        street: savedAddress.street || '',
-        city: savedAddress.city || '',
-        state: savedAddress.state || '',
-        zipCode: savedAddress.zipCode || '',
-        country: savedAddress.country || 'USA'
-      });
-      fetchOrders();
-      fetchNotifications();
-    }
-  }, [user]);
+    if (authLoading || !user) return;
+    setProfileForm({
+      name: user.name || '',
+      phone: user.phone || ''
+    });
+    const savedAddress = user.address || user.addresses?.find((a) => a.isDefault) || user.addresses?.[0] || {};
+    setAddressForm({
+      street: savedAddress.street || '',
+      city: savedAddress.city || '',
+      state: savedAddress.state || '',
+      zipCode: savedAddress.zipCode || '',
+      country: savedAddress.country || 'USA'
+    });
+    fetchOrders();
+    fetchNotifications();
+  }, [user, authLoading]);
 
   const fetchOrders = async () => {
     setLoadingOrders(true);
@@ -195,7 +194,9 @@ const Profile = () => {
       const { data } = await axios.get('/api/orders/myorders');
       setOrders(data);
     } catch (err) {
-      console.error('Error fetching customer orders:', err);
+      if (err.response?.status !== 401) {
+        console.error('Error fetching customer orders:', err);
+      }
     } finally {
       setLoadingOrders(false);
     }
@@ -207,7 +208,9 @@ const Profile = () => {
       const { data } = await axios.get('/api/notifications');
       setNotifications(data);
     } catch (err) {
-      console.error('Error loading notifications:', err);
+      if (err.response?.status !== 401) {
+        console.error('Error loading notifications:', err);
+      }
     } finally {
       setLoadingNotif(false);
     }

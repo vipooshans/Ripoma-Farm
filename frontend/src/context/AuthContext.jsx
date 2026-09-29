@@ -1,5 +1,12 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import {
+  installAxiosAuthInterceptors,
+  subscribeAdminSession,
+  subscribeCustomerSession,
+} from '../api/setupAxios';
+
+installAxiosAuthInterceptors();
 
 export const AuthContext = createContext();
 
@@ -28,20 +35,23 @@ export const AuthProvider = ({ children }) => {
         const parsedAdmin = JSON.parse(storedAdmin);
         setAdminUser(parsedAdmin);
       }
-
-      // Default authorization header (prefer admin token if in admin dashboard, else customer)
-      const currentAdmin = storedAdmin ? JSON.parse(storedAdmin) : null;
-      const currentCust = storedCustomer ? JSON.parse(storedCustomer) : null;
-      const token = currentAdmin?.token || currentCust?.token;
-
-      if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      }
     } catch (e) {
       console.error('Error loading stored auth session:', e);
     } finally {
       setLoading(false);
     }
+
+    const unsubCustomer = subscribeCustomerSession((session) => {
+      setUser(session);
+    });
+    const unsubAdmin = subscribeAdminSession((session) => {
+      setAdminUser(session);
+    });
+
+    return () => {
+      unsubCustomer();
+      unsubAdmin();
+    };
   }, []);
 
   // --------------------------------------------------------------------------
@@ -53,7 +63,6 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
       localStorage.setItem('customerInfo', JSON.stringify(data));
       localStorage.setItem('userInfo', JSON.stringify(data)); // Legacy compatibility
-      axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
       return { success: true, data };
     } catch (error) {
       return {
@@ -70,7 +79,6 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
       localStorage.setItem('customerInfo', JSON.stringify(data));
       localStorage.setItem('userInfo', JSON.stringify(data));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
       return { success: true, data };
     } catch (error) {
       return {
@@ -87,7 +95,6 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
       localStorage.setItem('customerInfo', JSON.stringify(data));
       localStorage.setItem('userInfo', JSON.stringify(data));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
       return { success: true, data };
     } catch (error) {
       return {
@@ -101,11 +108,6 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('customerInfo');
     localStorage.removeItem('userInfo');
-    if (adminUser?.token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${adminUser.token}`;
-    } else {
-      delete axios.defaults.headers.common['Authorization'];
-    }
   };
 
   const updateProfile = async (name, phone, address) => {
@@ -145,8 +147,6 @@ export const AuthProvider = ({ children }) => {
       const { data } = await axios.post('/api/v1/auth/admin/verify-2fa', { tempToken, code });
       setAdminUser(data);
       localStorage.setItem('adminInfo', JSON.stringify(data));
-      // Set admin token as active authorization header
-      axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
       return { success: true, data };
     } catch (error) {
       return {
@@ -160,11 +160,6 @@ export const AuthProvider = ({ children }) => {
   const adminLogout = () => {
     setAdminUser(null);
     localStorage.removeItem('adminInfo');
-    if (user?.token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
-    } else {
-      delete axios.defaults.headers.common['Authorization'];
-    }
   };
 
   return (
