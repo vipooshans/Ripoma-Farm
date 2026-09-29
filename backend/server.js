@@ -21,11 +21,9 @@ import notificationRoutes from './routes/notificationRoutes.js';
 
 dotenv.config();
 
-// Connect to Database (falls back to local JSON if Mongo offline)
-connectDB().then(() => {
-  // Bootstrap initial Super Admin account if needed
-  bootstrapSeedSuperAdmin();
-});
+// Must finish before listening, otherwise early requests are served from the JSON fallback
+await connectDB();
+await bootstrapSeedSuperAdmin();
 
 const app = express();
 
@@ -70,9 +68,11 @@ app.use(notFound);
 app.use(errorHandler);
 
 const PORT = Number(process.env.PORT) || 5050;
+// 0.0.0.0 exposes the API to the local network; default keeps it on this machine only
+const HOST = process.env.HOST || '127.0.0.1';
 
-const server = app.listen(PORT, '127.0.0.1', () => {
-  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on http://127.0.0.1:${PORT}`);
+const server = app.listen(PORT, HOST, () => {
+  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on http://${HOST}:${PORT}`);
 });
 
 server.on('error', (err) => {

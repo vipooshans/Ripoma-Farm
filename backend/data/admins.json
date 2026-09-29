@@ -1,0 +1,31 @@
+[
+  {
+    "_id": "bkl473b9w",
+    "createdAt": "2026-09-29T08:05:54.022Z",
+    "updatedAt": "2026-09-29T08:05:54.030Z",
+    "name": "Super Administrator",
+    "email": "admin@ripomafarm.com",
+    "password": "$2a$10$mD5LkkHAuwc8WLY3Y/xjyOS4AXPSV8j7Tel4gu/h5i81V747G0JDO",
+    "role": "super_admin",
+    "permissions": [
+      "all",
+      "manage_admins",
+      "manage_workers",
+      "manage_roles",
+      "manage_inventory",
+      "manage_products",
+      "manage_orders",
+      "manage_customers",
+      "manage_settings",
+      "view_financials",
+      "manage_financials",
+      "audit_logs"
+    ],
+    "two_factor_enabled": true,
+    "two_factor_secret": "RIPOMA-SECURE-2FA-FARM",
+    "status": "active",
+    "failedLoginAttempts": 0,
+    "lockoutUntil": null,
+    "loginHistory": []
+  }
+]
