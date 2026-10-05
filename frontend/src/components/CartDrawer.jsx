@@ -4,6 +4,7 @@ import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import { X, Trash2, ShoppingBag, ArrowRight, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatPrice, FREE_DELIVERY_THRESHOLD } from '../utils/currency';
 
 const CartDrawer = () => {
   const { 
@@ -73,14 +74,14 @@ const CartDrawer = () => {
               <div className="flex items-center justify-between text-xs font-bold text-[#2F4B3C]">
                 <div className="flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 shrink-0 text-[#2F4B3C]" />
-                  <span>{subtotal >= 50 ? '🎉 Free Delivery Unlocked!' : `Add $${(50 - subtotal).toFixed(2)} more for Free Delivery`}</span>
+                  <span>{subtotal >= FREE_DELIVERY_THRESHOLD ? '🎉 Free Delivery Unlocked!' : `Add ${formatPrice(FREE_DELIVERY_THRESHOLD - subtotal)} more for Free Delivery`}</span>
                 </div>
-                <span className="text-[10px] text-[#A65D3D]">{Math.min(100, Math.round((subtotal / 50) * 100))}%</span>
+                <span className="text-[10px] text-[#A65D3D]">{Math.min(100, Math.round((subtotal / FREE_DELIVERY_THRESHOLD) * 100))}%</span>
               </div>
               <div className="h-1.5 w-full bg-white rounded-full overflow-hidden border border-gray-200">
                 <div 
                   className="h-full bg-gradient-to-r from-[#2F4B3C] to-[#A65D3D] transition-all duration-300 rounded-full"
-                  style={{ width: `${Math.min(100, Math.round((subtotal / 50) * 100))}%` }}
+                  style={{ width: `${Math.min(100, Math.round((subtotal / FREE_DELIVERY_THRESHOLD) * 100))}%` }}
                 />
               </div>
             </div>
@@ -146,7 +147,7 @@ const CartDrawer = () => {
 
                         {/* Price Display */}
                         <span className="font-bold text-xs text-[#2F4B3C]">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          {formatPrice(item.price * item.quantity)}
                         </span>
                       </div>
                     </div>
@@ -169,23 +170,23 @@ const CartDrawer = () => {
                 <div className="space-y-2.5 text-xs text-gray-500 font-sans">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span className="font-bold text-gray-900">${subtotal.toFixed(2)}</span>
+                    <span className="font-bold text-gray-900">{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Estimated Surcharges & Tax</span>
-                    <span className="font-bold text-gray-900">${tax.toFixed(2)}</span>
+                    <span className="font-bold text-gray-900">{formatPrice(tax)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Delivery Charge</span>
                     {shippingFee === 0 ? (
                       <span className="text-[#2F4B3C] font-bold uppercase text-[9px] tracking-wider bg-[#2F4B3C]/10 border border-[#2F4B3C]/20 px-1.5 py-0.5 rounded">Free Shipping</span>
                     ) : (
-                      <span className="font-bold text-gray-900">${shippingFee.toFixed(2)}</span>
+                      <span className="font-bold text-gray-900">{formatPrice(shippingFee)}</span>
                     )}
                   </div>
                   {shippingFee > 0 && (
                     <p className="text-[9px] text-gray-400 font-light text-center select-none pt-1">
-                      Add <span className="font-bold text-[#2F4B3C]">${(50 - subtotal).toFixed(2)}</span> more to receive FREE delivery!
+                      Add <span className="font-bold text-[#2F4B3C]">{formatPrice(FREE_DELIVERY_THRESHOLD - subtotal)}</span> more to receive FREE delivery!
                     </p>
                   )}
                 </div>
@@ -194,7 +195,7 @@ const CartDrawer = () => {
 
                 <div className="flex justify-between items-baseline">
                   <span className="text-xs uppercase tracking-widest font-bold text-gray-800 font-serif">Total Bill</span>
-                  <span className="text-xl font-bold text-[#2F4B3C]">${total.toFixed(2)}</span>
+                  <span className="text-xl font-bold text-[#2F4B3C]">{formatPrice(total)}</span>
                 </div>
 
                 <button

@@ -8,6 +8,7 @@ import { HenIcon } from '../components/FarmIcons';
 import { ValidatedInput, PasswordInputWithMeter } from '../components/FormFields';
 import { FarmStoryModal } from '../components/FarmStoryModal';
 import RipomaLogo from '../components/RipomaLogo';
+import { formatPrice } from '../utils/currency';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 const isGoogleClientConfigured =
@@ -625,7 +626,7 @@ const Profile = () => {
             </div>
             <div>
               <span className="text-[9px] uppercase tracking-wider text-gray-500 font-bold block">Harvest Points</span>
-              <span className="text-xs font-bold text-[#2F4B3C]">185 Pts ($18.50 Off)</span>
+              <span className="text-xs font-bold text-[#2F4B3C]">185 Pts ({formatPrice(5550)} Off)</span>
             </div>
           </div>
 
@@ -729,7 +730,7 @@ const Profile = () => {
                               {new Date(order.createdAt).toLocaleDateString()}
                             </span>
                           </td>
-                          <td className="py-4 font-bold text-[#2F4B3C]">${order.total.toFixed(2)}</td>
+                          <td className="py-4 font-bold text-[#2F4B3C]">{formatPrice(order.total)}</td>
                           <td className="py-4">
                             <span className={`px-2 py-0.5 border rounded text-[8px] font-bold uppercase tracking-wider ${getStatusColor(order.orderStatus)}`}>
                               {order.orderStatus}
@@ -954,9 +955,9 @@ const Profile = () => {
                       <span className="font-semibold block truncate text-[11px]">{item.name}</span>
                       {item.variantName && <span className="text-[9px] text-gray-400 font-light block">{item.variantName}</span>}
                     </div>
-                    <span className="col-span-2 text-center font-light">${item.price.toFixed(2)}</span>
+                    <span className="col-span-2 text-center font-light">{formatPrice(item.price)}</span>
                     <span className="col-span-2 text-center font-light">{item.quantity}</span>
-                    <span className="col-span-2 text-right font-bold text-[#2F4B3C]">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="col-span-2 text-right font-bold text-[#2F4B3C]">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
@@ -965,19 +966,19 @@ const Profile = () => {
               <div className="border-t border-gray-100 pt-4 flex flex-col items-end gap-1 text-right">
                 <div className="w-40 flex justify-between text-[11px]">
                   <span>Subtotal:</span>
-                  <span className="font-semibold text-gray-800">${activeInvoice.subtotal.toFixed(2)}</span>
+                  <span className="font-semibold text-gray-800">{formatPrice(activeInvoice.subtotal)}</span>
                 </div>
                 <div className="w-40 flex justify-between text-[11px]">
                   <span>Tax & Curing:</span>
-                  <span className="font-semibold text-gray-800">${activeInvoice.tax.toFixed(2)}</span>
+                  <span className="font-semibold text-gray-800">{formatPrice(activeInvoice.tax)}</span>
                 </div>
                 <div className="w-40 flex justify-between text-[11px]">
                   <span>Delivery:</span>
-                  <span className="font-semibold text-gray-800">${activeInvoice.shippingFee.toFixed(2)}</span>
+                  <span className="font-semibold text-gray-800">{formatPrice(activeInvoice.shippingFee)}</span>
                 </div>
                 <div className="w-40 flex justify-between font-bold text-gray-950 border-t border-gray-100 pt-1.5 mt-1 text-xs">
                   <span>Total Amount:</span>
-                  <span className="text-[#2F4B3C] font-bold">${activeInvoice.total.toFixed(2)}</span>
+                  <span className="text-[#2F4B3C] font-bold">{formatPrice(activeInvoice.total)}</span>
                 </div>
               </div>
 

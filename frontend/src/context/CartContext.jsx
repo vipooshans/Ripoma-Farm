@@ -1,11 +1,12 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { DEFAULT_SHIPPING_FEE, DEFAULT_TAX_RATE, FREE_DELIVERY_THRESHOLD } from '../utils/currency';
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
-  const [shippingRates, setShippingRates] = useState({ taxRate: 5, shippingFee: 8.50 });
+  const [shippingRates, setShippingRates] = useState({ taxRate: DEFAULT_TAX_RATE, shippingFee: DEFAULT_SHIPPING_FEE });
 
   // Load cart from LocalStorage
   useEffect(() => {
@@ -20,8 +21,8 @@ export const CartProvider = ({ children }) => {
         const { data } = await axios.get('/api/settings');
         if (data) {
           setShippingRates({
-            taxRate: data.taxRate || 5,
-            shippingFee: data.shippingFee || 8.50
+            taxRate: data.taxRate || DEFAULT_TAX_RATE,
+            shippingFee: data.shippingFee || DEFAULT_SHIPPING_FEE
           });
         }
       } catch (err) {
@@ -107,7 +108,7 @@ export const CartProvider = ({ children }) => {
   // calculations
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = subtotal * (shippingRates.taxRate / 100);
-  const shippingFee = subtotal > 50 || subtotal === 0 ? 0 : shippingRates.shippingFee; // Free shipping above $50
+  const shippingFee = subtotal >= FREE_DELIVERY_THRESHOLD || subtotal === 0 ? 0 : shippingRates.shippingFee;
   const total = subtotal + tax + shippingFee;
 
   const placeOrder = async (customerDetails, paymentMethod) => {

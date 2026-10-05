@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { QuantityStepper } from '../components/FormFields';
 import RipomaLogo from '../components/RipomaLogo';
+import { formatPrice } from '../utils/currency';
 
 // Satisfying row flash on completion (Packed / Delivered)
 const useFulfilmentFlash = () => {
@@ -389,7 +390,7 @@ const AdminOrders = () => {
                         <div className="text-gray-900 font-bold">{order.customerDetails.name}</div>
                         <div className="text-[10px] text-gray-400">{order.customerDetails.phone} • {order.customerDetails.email}</div>
                       </td>
-                      <td className="p-4 font-bold text-[#2F4B3C]">${order.total.toFixed(2)}</td>
+                      <td className="p-4 font-bold text-[#2F4B3C]">{formatPrice(order.total)}</td>
                       <td className="p-4">
                         <span className={`px-2.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border ${
                           order.orderStatus === 'Delivered' ? 'bg-emerald-50 text-emerald-800 border-emerald-100' :
@@ -610,7 +611,7 @@ const AdminOrders = () => {
                             className="w-full text-left bg-white border border-gray-200 hover:border-[#2F4B3C] p-2 rounded text-[10px] font-bold flex justify-between items-center cursor-pointer"
                           >
                             <span>{p.name} ({v.name})</span>
-                            <span className="text-[#2F4B3C]">${v.price.toFixed(2)}</span>
+                            <span className="text-[#2F4B3C]">{formatPrice(v.price)}</span>
                           </button>
                         ));
                       }
@@ -622,7 +623,7 @@ const AdminOrders = () => {
                           className="w-full text-left bg-white border border-gray-200 hover:border-[#2F4B3C] p-2 rounded text-[10px] font-bold flex justify-between items-center cursor-pointer"
                         >
                           <span>{p.name}</span>
-                          <span className="text-[#2F4B3C]">${p.basePrice.toFixed(2)}</span>
+                          <span className="text-[#2F4B3C]">{formatPrice(p.basePrice)}</span>
                         </button>
                       );
                     })}
@@ -640,7 +641,7 @@ const AdminOrders = () => {
                         <div>
                           <div className="font-bold text-gray-800 truncate max-w-[150px]">{item.name}</div>
                           {item.variantName && <div className="text-[9px] text-[#A65D3D]">{item.variantName}</div>}
-                          <div className="text-gray-400 font-mono text-[9px]">${item.price.toFixed(2)} each</div>
+                          <div className="text-gray-400 font-mono text-[9px]">{formatPrice(item.price)} each</div>
                         </div>
                         <div className="flex items-center gap-2">
                           <input
@@ -813,7 +814,7 @@ const AdminOrders = () => {
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] text-gray-400">Total Charged: </span>
-                  <span className="font-bold text-gray-900 text-sm">${activeSlipOrder.total.toFixed(2)}</span>
+                  <span className="font-bold text-gray-900 text-sm">{formatPrice(activeSlipOrder.total)}</span>
                 </div>
               </div>
 

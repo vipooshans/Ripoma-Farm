@@ -20,6 +20,9 @@ dist/
 build/
 **/build/
 
+# Database backups
+**/backups/
+
 # Logs
 logs/
 *.log

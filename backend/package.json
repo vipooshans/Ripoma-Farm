@@ -8,7 +8,8 @@
     "start": "node --use-system-ca server.js",
     "dev": "nodemon --exec \"node --use-system-ca\" server.js",
     "seed": "node --use-system-ca utils/seed.js",
-    "create-admin": "node --use-system-ca utils/createAdmin.js"
+    "create-admin": "node --use-system-ca utils/createAdmin.js",
+    "migrate-lkr": "node --use-system-ca utils/migrateToLkr.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

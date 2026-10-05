@@ -3,6 +3,7 @@ import axios from 'axios';
 import { NotificationContext } from '../context/NotificationContext';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { DollarSign, ArrowUpRight, ArrowDownRight, FileSpreadsheet, Loader, Search } from 'lucide-react';
+import { formatCompactAmount, formatPrice } from '../utils/currency';
 
 const AdminFinancials = () => {
   const { showToast } = useContext(NotificationContext);
@@ -25,22 +26,22 @@ const AdminFinancials = () => {
     } catch {
       const mockStats = {
         summary: {
-          totalRevenue: 24850.00,
-          totalCostOfGoods: 9400.00,
-          grossProfit: 15450.00,
+          totalRevenue: 7455000.00,
+          totalCostOfGoods: 2820000.00,
+          grossProfit: 4635000.00,
           profitMarginPct: 62.1
         },
         recentTransactions: [
-          { _id: 't1', date: new Date().toISOString(), type: 'income', category: 'Sales', description: 'Order #INV-2601 - Organic Poultry & Eggs', amount: 145.00, costOfGoods: 42.00, referenceId: 'INV-2601' },
-          { _id: 't2', date: new Date().toISOString(), type: 'income', category: 'Sales', description: 'Order #INV-2602 - Solar Dry Fish Bundle', amount: 89.50, costOfGoods: 28.00, referenceId: 'INV-2602' },
-          { _id: 't3', date: new Date().toISOString(), type: 'expense', category: 'Supplies', description: 'Organic Feed Sourcing Feed Mills', amount: 450.00, costOfGoods: 0.00, referenceId: 'SUP-991' }
+          { _id: 't1', date: new Date().toISOString(), type: 'income', category: 'Sales', description: 'Order #INV-2601 - Organic Poultry & Eggs', amount: 43500.00, costOfGoods: 12600.00, referenceId: 'INV-2601' },
+          { _id: 't2', date: new Date().toISOString(), type: 'income', category: 'Sales', description: 'Order #INV-2602 - Solar Dry Fish Bundle', amount: 26850.00, costOfGoods: 8400.00, referenceId: 'INV-2602' },
+          { _id: 't3', date: new Date().toISOString(), type: 'expense', category: 'Supplies', description: 'Organic Feed Sourcing Feed Mills', amount: 135000.00, costOfGoods: 0.00, referenceId: 'SUP-991' }
         ],
         monthlySalesTrends: [
-          { month: 'Jan', revenue: 3800, cost: 1400 },
-          { month: 'Feb', revenue: 4200, cost: 1600 },
-          { month: 'Mar', revenue: 5100, cost: 1900 },
-          { month: 'Apr', revenue: 4900, cost: 1800 },
-          { month: 'May', revenue: 6850, cost: 2700 }
+          { month: 'Jan', revenue: 1140000, cost: 420000 },
+          { month: 'Feb', revenue: 1260000, cost: 480000 },
+          { month: 'Mar', revenue: 1530000, cost: 570000 },
+          { month: 'Apr', revenue: 1470000, cost: 540000 },
+          { month: 'May', revenue: 2055000, cost: 810000 }
         ]
       };
       setStats(mockStats);
@@ -59,7 +60,7 @@ const AdminFinancials = () => {
 
     try {
       // Create CSV Headers
-      const headers = ['ID', 'Date', 'Type', 'Category', 'Description', 'Amount ($)', 'Cost of Goods ($)', 'Ref ID'];
+      const headers = ['ID', 'Date', 'Type', 'Category', 'Description', 'Amount (LKR)', 'Cost of Goods (LKR)', 'Ref ID'];
       
       // Create CSV Rows
       const rows = transactions.map(t => [
@@ -132,7 +133,7 @@ const AdminFinancials = () => {
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex justify-between items-center">
           <div className="space-y-1">
             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">Gross Sales Revenue</span>
-            <span className="text-xl font-black text-emerald-700">${summary.totalRevenue.toFixed(2)}</span>
+            <span className="text-xl font-black text-emerald-700">{formatPrice(summary.totalRevenue)}</span>
           </div>
           <div className="w-9 h-9 bg-emerald-50 text-emerald-700 rounded-lg flex items-center justify-center">
             <ArrowUpRight className="w-5 h-5" />
@@ -142,7 +143,7 @@ const AdminFinancials = () => {
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex justify-between items-center">
           <div className="space-y-1">
             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">Operational Expenditures</span>
-            <span className="text-xl font-black text-red-600">${totalExpenses.toFixed(2)}</span>
+            <span className="text-xl font-black text-red-600">{formatPrice(totalExpenses)}</span>
           </div>
           <div className="w-9 h-9 bg-red-50 text-red-700 rounded-lg flex items-center justify-center">
             <ArrowDownRight className="w-5 h-5" />
@@ -152,7 +153,7 @@ const AdminFinancials = () => {
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex justify-between items-center">
           <div className="space-y-1">
             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">Net Income Margin</span>
-            <span className="text-xl font-black text-farm-green">${summary.netProfit.toFixed(2)}</span>
+            <span className="text-xl font-black text-farm-green">{formatPrice(summary.netProfit)}</span>
           </div>
           <div className="w-9 h-9 bg-farm-green-light text-farm-green rounded-lg flex items-center justify-center">
             <DollarSign className="w-5 h-5" />
@@ -171,8 +172,8 @@ const AdminFinancials = () => {
             <AreaChart data={monthlySalesTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
               <XAxis dataKey="month" stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} />
-              <YAxis stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} />
-              <Tooltip />
+              <YAxis stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} tickFormatter={formatCompactAmount} />
+              <Tooltip formatter={(value) => formatPrice(value)} />
               <Legend />
               <Area type="monotone" dataKey="sales" name="Sales Revenue" stroke="#166534" strokeWidth={2} fill="#166534" fillOpacity={0.05} />
               <Area type="monotone" dataKey="profit" name="Net Profit" stroke="#d97706" strokeWidth={2} fill="#d97706" fillOpacity={0.02} />
@@ -235,7 +236,7 @@ const AdminFinancials = () => {
                     </span>
                   </td>
                   <td className={`p-3 text-right font-bold ${t.type === 'income' ? 'text-farm-green' : 'text-rose-700'}`}>
-                    {t.type === 'income' ? '+' : '-'}${t.amount.toFixed(2)}
+                    {t.type === 'income' ? '+' : '-'}{formatPrice(t.amount)}
                   </td>
                 </tr>
               ))}

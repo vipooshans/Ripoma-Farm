@@ -3,6 +3,20 @@ import axios from 'axios';
 import { NotificationContext } from '../context/NotificationContext';
 import { Plus, Edit2, Trash2, Search, X, Loader, Tag, AlertTriangle, CheckCircle, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { QuantityStepper } from '../components/FormFields';
+import { formatPrice } from '../utils/currency';
+
+// en-CA formats as YYYY-MM-DD in the user's local timezone, matching <input type="date"> values
+const todayISO = () => new Date().toLocaleDateString('en-CA');
+
+const MAX_SHELF_LIFE = { 'Dry Fish': 90, Eggs: 30, Chicken: 14 };
+const DEFAULT_SHELF_LIFE = { 'Dry Fish': '90', Eggs: '21', Chicken: '7' };
+
+const STEP_FIELDS = {
+  1: ['name', 'description', 'category'],
+  2: ['imageUrl'],
+  3: ['basePrice', 'costPrice', 'discount', 'stock'],
+  4: ['origin', 'harvestDate', 'shelfLife'],
+};
 
 const AdminProducts = () => {
   const { showToast } = useContext(NotificationContext);
@@ -41,9 +55,9 @@ const AdminProducts = () => {
     costPrice: '',
     discount: '0',
     stock: '0',
-    shelfLife: '30',
+    shelfLife: DEFAULT_SHELF_LIFE['Dry Fish'],
     origin: 'Pasture Barn A',
-    harvestDate: new Date().toISOString().split('T')[0]
+    harvestDate: todayISO()
   });
 
   // Validation errors state
@@ -95,9 +109,9 @@ const AdminProducts = () => {
       costPrice: '',
       discount: '0',
       stock: '0',
-      shelfLife: '30',
+      shelfLife: DEFAULT_SHELF_LIFE['Dry Fish'],
       origin: 'Pasture Barn A',
-      harvestDate: new Date().toISOString().split('T')[0]
+      harvestDate: todayISO()
     });
     setSpecs([{ key: '', value: '' }]);
     setVariants([{ name: '', price: '', costPrice: '', stock: '' }]);
@@ -116,9 +130,10 @@ const AdminProducts = () => {
     resetForm();
     setEditingId(prod._id);
     
-    const parsedShelfLife = prod.specifications?.['Shelf Life']?.replace(' Days', '') || '30';
-    const parsedOrigin = prod.specifications?.['Origin Source'] || 'Pasture Barn A';
-    const parsedHarvestDate = prod.specifications?.['Harvest Date'] || new Date().toISOString().split('T')[0];
+    const parsedShelfLife = prod.specifications?.['Shelf Life']?.replace(' Days', '') || DEFAULT_SHELF_LIFE[prod.category] || DEFAULT_SHELF_LIFE['Dry Fish'];
+    const savedOrigin = prod.specifications?.['Origin Source'];
+    const parsedOrigin = registeredSources.includes(savedOrigin) ? savedOrigin : 'Pasture Barn A';
+    const parsedHarvestDate = prod.specifications?.['Harvest Date'] || todayISO();
 
     setForm({
       name: prod.name,
@@ -518,7 +533,7 @@ const AdminProducts = () => {
                         {prod.category}
                       </span>
                     </td>
-                    <td className="p-4 font-bold text-gray-800">${prod.basePrice.toFixed(2)}</td>
+                    <td className="p-4 font-bold text-gray-800">{formatPrice(prod.basePrice)}</td>
                     <td className="p-4">
                       <span className={`px-2 py-0.5 rounded font-bold text-[9px] uppercase tracking-wider select-none ${
                         prod.stock === 0 ? 'bg-red-50 text-red-700 border border-red-100' :
@@ -711,7 +726,7 @@ const AdminProducts = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Base Price ($)</label>
+                      <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Base Price (LKR)</label>
                       <input
                         type="number"
                         name="basePrice"
@@ -728,7 +743,7 @@ const AdminProducts = () => {
                       )}
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Cost Price ($)</label>
+                      <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Cost Price (LKR)</label>
                       <input
                         type="number"
                         name="costPrice"
@@ -805,7 +820,7 @@ const AdminProducts = () => {
                           />
                           <input
                             type="number"
-                            placeholder="Price ($)"
+                            placeholder="Price (LKR)"
                             value={v.price}
                             onChange={(e) => handleVariantChange(index, 'price', e.target.value)}
                             className="border border-gray-200 rounded py-1 px-2 w-full text-[10px] bg-white"

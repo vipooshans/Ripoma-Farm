@@ -81,7 +81,7 @@ export const addWorker = async (req, res) => {
         email: cleanEmail,
         phone: phone || '',
         role: role || 'Staff/Worker',
-        hourlyRate: Number(hourlyRate || 15),
+        hourlyRate: Number(hourlyRate || 4500),
         tasks: [],
         attendance: [],
       });
@@ -119,7 +119,7 @@ export const addWorker = async (req, res) => {
         phone: phone || '',
         status: 'active',
         role: role || 'Staff/Worker',
-        hourlyRate: Number(hourlyRate || 15),
+        hourlyRate: Number(hourlyRate || 4500),
         tasks: [],
         attendance: [],
       });

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { NotificationContext } from '../context/NotificationContext';
+import { formatCompactAmount, formatPrice } from '../utils/currency';
 import { 
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
   BarChart, Bar 
@@ -93,7 +94,7 @@ const AdminOverview = () => {
         <div className="bg-white rounded-lg p-5 border border-gray-150/60 shadow-sm flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Total Revenue</span>
-            <span className="text-xl font-bold text-gray-900">${summary.totalRevenue.toFixed(2)}</span>
+            <span className="text-xl font-bold text-gray-900">{formatPrice(summary.totalRevenue)}</span>
             <span className="text-[9px] text-[#2F4B3C] font-semibold block flex items-center gap-0.5 mt-1 select-none">
               <TrendingUp className="w-3 h-3" /> +14% monthly growth
             </span>
@@ -107,7 +108,7 @@ const AdminOverview = () => {
         <div className="bg-white rounded-lg p-5 border border-gray-150/60 shadow-sm flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Today's Sales</span>
-            <span className="text-xl font-bold text-gray-900">${summary.todaySales.toFixed(2)}</span>
+            <span className="text-xl font-bold text-gray-900">{formatPrice(summary.todaySales)}</span>
             <span className="text-[9px] text-gray-400 block mt-1 font-light">Current fiscal day</span>
           </div>
           <div className="w-10 h-10 bg-[#A65D3D]/10 border border-[#A65D3D]/20 text-[#A65D3D] rounded flex items-center justify-center shrink-0">
@@ -119,7 +120,7 @@ const AdminOverview = () => {
         <div className="bg-white rounded-lg p-5 border border-gray-150/60 shadow-sm flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Net Profit Margin</span>
-            <span className="text-xl font-bold text-[#2F4B3C]">${summary.netProfit.toFixed(2)}</span>
+            <span className="text-xl font-bold text-[#2F4B3C]">{formatPrice(summary.netProfit)}</span>
             <span className="text-[9px] text-[#2F4B3C]/60 block mt-1 font-light">Reflects Cost of Goods</span>
           </div>
           <div className="w-10 h-10 bg-[#2F4B3C]/5 border border-[#2F4B3C]/10 text-[#2F4B3C] rounded flex items-center justify-center shrink-0">
@@ -148,7 +149,7 @@ const AdminOverview = () => {
         <div className="bg-white rounded-xl p-6 border border-gray-200/80 shadow-sm lg:col-span-2 space-y-4">
           <div className="space-y-0.5">
             <h3 className="font-bold text-[#2F4B3C] text-sm uppercase tracking-wider">Monthly performance</h3>
-            <p className="text-[10px] text-gray-400 font-light">Total monthly revenue margins vs net profitability in USD.</p>
+            <p className="text-[10px] text-gray-400 font-light">Total monthly revenue margins vs net profitability in LKR.</p>
           </div>
           <div className="h-64 w-full text-[10px]">
             <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 1, height: 1 }}>
@@ -161,8 +162,8 @@ const AdminOverview = () => {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
                 <XAxis dataKey="month" stroke="#9ca3af" fontSize={9} tickLine={false} axisLine={false} />
-                <YAxis stroke="#9ca3af" fontSize={9} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ fontSize: '11px', borderRadius: '6px' }} />
+                <YAxis stroke="#9ca3af" fontSize={9} tickLine={false} axisLine={false} tickFormatter={formatCompactAmount} />
+                <Tooltip contentStyle={{ fontSize: '11px', borderRadius: '6px' }} formatter={(value) => formatPrice(value)} />
                 <Area type="monotone" dataKey="sales" name="Sales Volume" stroke="#2F4B3C" strokeWidth={1.5} fillOpacity={1} fill="url(#colorSales)" />
                 <Area type="monotone" dataKey="profit" name="Net Profit" stroke="#A65D3D" strokeWidth={1.5} fill="transparent" />
               </AreaChart>
@@ -226,7 +227,7 @@ const AdminOverview = () => {
                     <tr key={ord._id} className="border-b border-gray-50 hover:bg-[#F6EFE3]/30 transition-colors">
                       <td className="py-3 font-mono font-bold text-gray-800">{ord.invoiceNumber}</td>
                       <td className="py-3 text-gray-600 font-light">{ord.customerDetails.name}</td>
-                      <td className="py-3 font-bold text-[#2F4B3C]">${ord.total.toFixed(2)}</td>
+                      <td className="py-3 font-bold text-[#2F4B3C]">{formatPrice(ord.total)}</td>
                       <td className="py-3">
                         <span className={`px-2 py-0.5 border rounded text-[8px] font-bold uppercase tracking-wider ${
                           ord.orderStatus === 'Delivered' ? 'bg-emerald-50 text-emerald-800 border-emerald-100' :

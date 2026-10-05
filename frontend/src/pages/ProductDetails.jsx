@@ -6,6 +6,7 @@ import { AuthContext } from '../context/AuthContext';
 import { NotificationContext } from '../context/NotificationContext';
 import { Star, ShieldAlert, CheckCircle, Package, ArrowLeft, ShoppingBag, ShoppingCart, AlertTriangle } from 'lucide-react';
 import { QRTraceIcon } from '../components/FarmIcons';
+import { formatPrice } from '../utils/currency';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -249,9 +250,9 @@ const ProductDetails = () => {
             <div>
               <span className="text-[10px] uppercase font-bold tracking-widest text-[#A65D3D] block">Price</span>
               <div className="flex items-baseline gap-1.5 mt-1">
-                <span className="text-xl font-bold text-[#2F4B3C]">${finalPrice.toFixed(2)}</span>
+                <span className="text-xl font-bold text-[#2F4B3C]">{formatPrice(finalPrice)}</span>
                 {product.discount > 0 && (
-                  <span className="text-xs text-gray-400 line-through">${activePrice.toFixed(2)}</span>
+                  <span className="text-xs text-gray-400 line-through">{formatPrice(activePrice)}</span>
                 )}
               </div>
             </div>
@@ -280,7 +281,7 @@ const ProductDetails = () => {
                 className="w-full bg-white border border-gray-200 focus:ring-1 focus:ring-[#2F4B3C] outline-none rounded py-3 px-4 text-xs font-semibold cursor-pointer uppercase tracking-wider"
               >
                 {product.variants.map((v, i) => (
-                  <option key={i} value={v.name}>{v.name} — ${v.price.toFixed(2)}</option>
+                  <option key={i} value={v.name}>{v.name} — {formatPrice(v.price)}</option>
                 ))}
               </select>
             </div>

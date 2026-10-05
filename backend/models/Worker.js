@@ -37,7 +37,7 @@ const WorkerSchema = new mongoose.Schema({
   },
   hourlyRate: {
     type: Number,
-    default: 15,
+    default: 4500,
   },
   tasks: [TaskSchema],
   attendance: [{

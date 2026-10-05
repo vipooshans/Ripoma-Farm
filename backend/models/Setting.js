@@ -28,11 +28,11 @@ const SettingSchema = new mongoose.Schema({
   },
   shippingFee: {
     type: Number,
-    default: 10, // currency value
+    default: 2550, // currency value
   },
   currency: {
     type: String,
-    default: 'USD',
+    default: 'LKR',
   },
   stripeEnabled: {
     type: Boolean,

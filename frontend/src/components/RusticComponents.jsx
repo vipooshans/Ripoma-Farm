@@ -84,7 +84,7 @@ export const StampedSeal = ({
 /* ─────────────────────────────────────────────────────────────
    CHALKBOARD PRICE BADGE
    Dark chalkboard chip with hand-lettered price text.
-   Usage: <ChalkboardBadge price="$4.99" />
+   Usage: <ChalkboardBadge price="LKR 1,497.00" />
 ─────────────────────────────────────────────────────────────── */
 export const ChalkboardBadge = ({ price, className = '' }) => (
   <div

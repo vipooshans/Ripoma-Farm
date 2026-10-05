@@ -25,6 +25,7 @@ import { HenIcon } from '../components/FarmIcons';
 import AdminLogin from './AdminLogin';
 import RipomaLogo from '../components/RipomaLogo';
 import { Flame } from 'lucide-react';
+import { formatPrice } from '../utils/currency';
 
 const AdminDashboard = () => {
   const { user, adminUser, adminLogout, logout, loading } = useContext(AuthContext);
@@ -434,7 +435,7 @@ const AdminDashboard = () => {
                               <span className="font-mono font-bold text-gray-800">{o.invoiceNumber}</span>
                               <span className="text-gray-400 text-[10px] pl-2 font-light">({o.customerDetails.name})</span>
                             </div>
-                            <span className="text-gray-700 font-bold">${o.total.toFixed(2)}</span>
+                            <span className="text-gray-700 font-bold">{formatPrice(o.total)}</span>
                           </button>
                         ))}
                       </div>

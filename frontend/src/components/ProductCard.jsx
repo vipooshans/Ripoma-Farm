@@ -4,6 +4,7 @@ import { CartContext } from '../context/CartContext';
 import { NotificationContext } from '../context/NotificationContext';
 import { ShoppingBag, Star } from 'lucide-react';
 import { TwineTagHeader, ChalkboardBadge, StampedSeal } from './RusticComponents';
+import { formatPrice } from '../utils/currency';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useContext(CartContext);
@@ -127,10 +128,10 @@ const ProductCard = ({ product }) => {
             <div className="flex items-center justify-between">
               {/* Chalkboard price badge */}
               <div className="flex items-center gap-2">
-                <ChalkboardBadge price={`$${finalPrice.toFixed(2)}`} />
+                <ChalkboardBadge price={formatPrice(finalPrice)} />
                 {discountPercent > 0 && (
                   <span className="text-[10px] text-[#8A6A4B] line-through font-sans">
-                    ${originalPrice.toFixed(2)}
+                    {formatPrice(originalPrice)}
                   </span>
                 )}
               </div>

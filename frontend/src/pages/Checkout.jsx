@@ -6,6 +6,7 @@ import { NotificationContext } from '../context/NotificationContext';
 import { ShieldCheck, Truck, CreditCard, ChevronRight, CheckCircle, Lock, AlertTriangle, MapPin, Clock, Calendar } from 'lucide-react';
 import { ValidatedInput, PhoneInput, CreditCardInput } from '../components/FormFields';
 import RipomaLogo from '../components/RipomaLogo';
+import { formatPrice } from '../utils/currency';
 
 const Checkout = () => {
   const { cartItems, subtotal, tax, shippingFee, total, placeOrder } = useContext(CartContext);
@@ -282,7 +283,7 @@ const Checkout = () => {
           </div>
           <div className="flex justify-between">
             <span className="text-gray-400">Total Charged</span>
-            <span className="font-bold text-[#2F4B3C]">${successOrder.total.toFixed(2)}</span>
+            <span className="font-bold text-[#2F4B3C]">{formatPrice(successOrder.total)}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-400">Order Status</span>
@@ -575,7 +576,7 @@ const Checkout = () => {
             disabled={loading || hasCheckoutErrors}
             className="w-full bg-[#2F4B3C] hover:bg-[#A65D3D] text-white font-bold py-4 rounded text-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-1.5 shadow-md disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
-            {loading ? 'Confirming secure order...' : `Complete Sourcing Order — $${total.toFixed(2)}`}
+            {loading ? 'Confirming secure order...' : `Complete Sourcing Order — ${formatPrice(total)}`}
           </button>
         </form>
 
@@ -595,7 +596,7 @@ const Checkout = () => {
                       <span className="text-[9px] text-gray-400 font-light">{item.variantName ? `${item.variantName} x ` : ''}{item.quantity} units</span>
                     </div>
                   </div>
-                  <span className="font-bold text-gray-950 text-[11px]">${(item.price * item.quantity).toFixed(2)}</span>
+                  <span className="font-bold text-gray-950 text-[11px]">{formatPrice(item.price * item.quantity)}</span>
                 </div>
               ))}
             </div>
@@ -605,16 +606,16 @@ const Checkout = () => {
           <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm space-y-3 text-xs text-gray-500 font-sans">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span className="font-bold text-gray-900">${subtotal.toFixed(2)}</span>
+              <span className="font-bold text-gray-900">{formatPrice(subtotal)}</span>
             </div>
             <div className="flex justify-between">
               <span>Estimated Surcharges & Tax</span>
-              <span className="font-bold text-gray-900">${tax.toFixed(2)}</span>
+              <span className="font-bold text-gray-900">{formatPrice(tax)}</span>
             </div>
             <div className="flex justify-between">
               <span>Delivery Charge</span>
               <span className="font-bold text-gray-900">
-                {shippingFee === 0 ? 'FREE' : `$${shippingFee.toFixed(2)}`}
+                {shippingFee === 0 ? 'FREE' : formatPrice(shippingFee)}
               </span>
             </div>
             
@@ -622,7 +623,7 @@ const Checkout = () => {
             
             <div className="flex justify-between text-sm items-baseline text-gray-950 font-bold">
               <span>Total Bill</span>
-              <span className="text-base font-bold text-[#2F4B3C]">${total.toFixed(2)}</span>
+              <span className="text-base font-bold text-[#2F4B3C]">{formatPrice(total)}</span>
             </div>
 
             {/* Secure payment shield info */}

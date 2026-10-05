@@ -5,6 +5,7 @@ import {
   Settings, Save, Database, Loader, AlertTriangle, ShieldCheck,
   CheckCircle, Key, Eye, EyeOff, Lock, Zap, Download, Shield, RefreshCw
 } from 'lucide-react';
+import { DEFAULT_SHIPPING_FEE } from '../utils/currency';
 
 /* ── Password Strength Meter ────────────────────────────────────── */
 const strengthLevels = [
@@ -109,7 +110,7 @@ const AdminSettings = () => {
     contactPhone: '+1 (555) 019-9283',
     address: '128 Agro Valley Road, Organic City',
     taxRate: '5',
-    shippingFee: '10',
+    shippingFee: String(DEFAULT_SHIPPING_FEE),
     stripeEnabled: true,
     cashOnDeliveryEnabled: true,
   });
@@ -144,7 +145,7 @@ const AdminSettings = () => {
           contactPhone: data.contactPhone || '+1 (555) 019-9283',
           address: data.address || '128 Agro Valley Road, Organic City',
           taxRate: (data.taxRate || 5).toString(),
-          shippingFee: (data.shippingFee || 10).toString(),
+          shippingFee: (data.shippingFee || DEFAULT_SHIPPING_FEE).toString(),
           stripeEnabled: data.stripeEnabled !== undefined ? data.stripeEnabled : true,
           cashOnDeliveryEnabled: data.cashOnDeliveryEnabled !== undefined ? data.cashOnDeliveryEnabled : true,
         });
@@ -469,7 +470,7 @@ const AdminSettings = () => {
                 )}
               </div>
               <div className="space-y-1">
-                <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Shipping Fee ($)</label>
+                <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Shipping Fee (LKR)</label>
                 <input
                   type="number" name="shippingFee" value={form.shippingFee}
                   onChange={handleChange} onBlur={handleBlur}

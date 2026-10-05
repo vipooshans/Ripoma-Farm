@@ -4,6 +4,7 @@ import InventoryLog from '../models/Inventory.js';
 import Transaction from '../models/Transaction.js';
 import Notification from '../models/Notification.js';
 import { jsonDb } from '../utils/jsonDb.js';
+import { formatPrice } from '../utils/currency.js';
 
 // Helper to check stock and trigger low stock alerts
 const handleStockReduction = async (productId, variantName, qtyOrdered, orderId, userName) => {
@@ -149,7 +150,7 @@ export const createOrder = async (req, res) => {
       // Notify admin of new order
       await Notification.create({
         title: 'New Order Received',
-        message: `Order #${createdOrder._id} was placed by ${userName} for a total of $${total.toFixed(2)}`,
+        message: `Order #${createdOrder._id} was placed by ${userName} for a total of ${formatPrice(total)}`,
         type: 'success',
         roleRecipient: 'admin',
       });
@@ -190,7 +191,7 @@ export const createOrder = async (req, res) => {
       // Notify Admin
       jsonDb.create('notifications', {
         title: 'New Order Received',
-        message: `Order #${newOrder._id} was placed by ${userName} for a total of $${total.toFixed(2)}`,
+        message: `Order #${newOrder._id} was placed by ${userName} for a total of ${formatPrice(total)}`,
         type: 'success',
         roleRecipient: 'admin',
       });

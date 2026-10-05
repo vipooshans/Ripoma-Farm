@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { NotificationContext } from '../context/NotificationContext';
 import { Plus, Calendar, Loader, Check, AlertTriangle, Edit2, Trash2, ShieldAlert } from 'lucide-react';
+import { formatPrice } from '../utils/currency';
 
 const AdminWorkers = () => {
   const { showToast } = useContext(NotificationContext);
@@ -25,7 +26,7 @@ const AdminWorkers = () => {
     phone: '',
     role: 'Feeder',
     zone: 'Poultry Barn Alpha',
-    hourlyRate: '15'
+    hourlyRate: '4500'
   });
 
   // Validation state
@@ -315,7 +316,7 @@ const AdminWorkers = () => {
         <button
           onClick={() => {
             setSelectedWorker(null);
-            setForm({ name: '', email: '', password: '', phone: '', role: 'Feeder', zone: 'Poultry Barn Alpha', hourlyRate: '15' });
+            setForm({ name: '', email: '', password: '', phone: '', role: 'Feeder', zone: 'Poultry Barn Alpha', hourlyRate: '4500' });
             setErrors({});
             setTouched({});
             setIsAddOpen(true);
@@ -393,7 +394,7 @@ const AdminWorkers = () => {
                           </td>
                           <td className="p-4 text-gray-500 font-light">{w.email}</td>
                           <td className="p-4 text-gray-500 font-light">{w.phone || 'N/A'}</td>
-                          <td className="p-4 font-bold text-gray-800">${w.hourlyRate}/hr</td>
+                          <td className="p-4 font-bold text-gray-800">{formatPrice(w.hourlyRate)}/hr</td>
                           <td className="p-4">
                             <span className={`px-2 py-0.5 border rounded text-[8px] font-bold uppercase tracking-wider ${
                               w.status === 'active' ? 'bg-emerald-50 text-emerald-800 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'
@@ -718,7 +719,7 @@ const AdminWorkers = () => {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Hourly Wage ($)</label>
+                  <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Hourly Wage (LKR)</label>
                   <input
                     type="number"
                     name="hourlyRate"
@@ -841,7 +842,7 @@ const AdminWorkers = () => {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Hourly Wage ($)</label>
+                  <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Hourly Wage (LKR)</label>
                   <input
                     type="number"
                     name="hourlyRate"

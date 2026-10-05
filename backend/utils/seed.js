@@ -15,6 +15,7 @@ import Setting from '../models/Setting.js';
 import Notification from '../models/Notification.js';
 import AuditLog from '../models/AuditLog.js';
 import { writeData } from './jsonDb.js';
+import { orderToLkr, productToLkr, settingsToLkr, transactionToLkr, workerToLkr } from './currency.js';
 
 dotenv.config();
 
@@ -680,7 +681,7 @@ const seedData = async () => {
     { title: 'Kitchen restock reminder', message: 'Pasture chicken wings are packed and will leave the farm tomorrow morning.', type: 'info', roleRecipient: 'customer', userId: IDS.customerSarah, read: false, createdAt: hoursAgo(8) },
     { title: 'Order delivered', message: 'Invoice INV-0901-077 reached Galle. Thank you for sourcing from Ripoma Farm.', type: 'success', roleRecipient: 'customer', userId: IDS.customerNimal, read: false, createdAt: daysAgo(14) },
     { title: 'Low Stock Alert', message: 'Product "Premium Chicken Breast (Boneless)" is running low. Current stock: 8.', type: 'warning', roleRecipient: 'admin', userId: null, read: false, createdAt: daysAgo(1) },
-    { title: 'New storefront order', message: 'Order INV-0917-012 placed by Sarah Customer (wings, $24.25).', type: 'info', roleRecipient: 'admin', userId: null, read: false, createdAt: daysAgo(1) },
+    { title: 'New storefront order', message: 'Order INV-0917-012 placed by Sarah Customer (wings, LKR 7,275.00).', type: 'info', roleRecipient: 'admin', userId: null, read: false, createdAt: daysAgo(1) },
     { title: 'Refund processed', message: 'Invoice INV-0910-019 was cancelled and refunded to Nimal Perera.', type: 'warning', roleRecipient: 'admin', userId: null, read: true, createdAt: daysAgo(8) },
     { title: 'Egg collection due', message: 'Barn A trays still need grading before the 4 PM van.', type: 'warning', roleRecipient: 'worker', userId: null, read: false, createdAt: hoursAgo(3) },
     { title: 'Dry-fish racks', message: 'Turn the mackerel drying racks at 3 PM today.', type: 'info', roleRecipient: 'worker', userId: null, read: false, createdAt: hoursAgo(6) },
@@ -707,6 +708,13 @@ const seedData = async () => {
     { userId: IDS.admin, userName: 'Super Administrator', action: 'change_order_status', description: 'Cancelled and refunded INV-0910-019.', ipAddress: '127.0.0.1', createdAt: daysAgo(8) },
   ];
 
+  // Sample amounts above are authored in USD; the store runs in LKR.
+  const lkrProducts = products.map(productToLkr);
+  const lkrSettings = settings.map(settingsToLkr);
+  const lkrWorkers = workers.map(workerToLkr);
+  const lkrOrders = orders.map(orderToLkr);
+  const lkrTransactions = transactions.map(transactionToLkr);
+
   if (global.dbConnected) {
     try {
       await Admin.deleteMany({});
@@ -725,11 +733,11 @@ const seedData = async () => {
       await Admin.insertMany(admins);
       await Customer.insertMany(customers);
       await Category.insertMany(categories);
-      await Product.insertMany(products);
-      await Setting.insertMany(settings);
-      await Worker.insertMany(workers);
-      await Order.insertMany(orders);
-      await Transaction.insertMany(transactions);
+      await Product.insertMany(lkrProducts);
+      await Setting.insertMany(lkrSettings);
+      await Worker.insertMany(lkrWorkers);
+      await Order.insertMany(lkrOrders);
+      await Transaction.insertMany(lkrTransactions);
       await Notification.insertMany(notifications);
       await InventoryLog.insertMany(inventorylogs);
       await AuditLog.insertMany(auditlogs);
@@ -743,11 +751,11 @@ const seedData = async () => {
       writeData('admins', admins);
       writeData('customers', customers);
       writeData('categories', categories);
-      writeData('products', products);
-      writeData('settings', settings);
-      writeData('workers', workers);
-      writeData('orders', orders);
-      writeData('transactions', transactions);
+      writeData('products', lkrProducts);
+      writeData('settings', lkrSettings);
+      writeData('workers', lkrWorkers);
+      writeData('orders', lkrOrders);
+      writeData('transactions', lkrTransactions);
       writeData('notifications', notifications);
       writeData('inventorylogs', inventorylogs);
       writeData('auditlogs', auditlogs);

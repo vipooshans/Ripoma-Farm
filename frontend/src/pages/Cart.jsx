@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import { Trash2, ShoppingBag, ArrowRight, ShieldCheck } from 'lucide-react';
+import { formatPrice, FREE_DELIVERY_THRESHOLD } from '../utils/currency';
 
 const Cart = () => {
   const { 
@@ -107,8 +108,8 @@ const Cart = () => {
 
                 {/* Price Display */}
                 <div className="text-right w-24">
-                  <div className="font-bold text-[#2F4B3C] text-sm">${(item.price * item.quantity).toFixed(2)}</div>
-                  <div className="text-[10px] text-gray-400 font-light">${item.price.toFixed(2)} ea</div>
+                  <div className="font-bold text-[#2F4B3C] text-sm">{formatPrice(item.price * item.quantity)}</div>
+                  <div className="text-[10px] text-gray-400 font-light">{formatPrice(item.price)} ea</div>
                 </div>
 
                 {/* Remove */}
@@ -132,23 +133,23 @@ const Cart = () => {
           <div className="space-y-3.5 text-xs text-gray-500 font-sans">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span className="font-bold text-gray-900">${subtotal.toFixed(2)}</span>
+              <span className="font-bold text-gray-900">{formatPrice(subtotal)}</span>
             </div>
             <div className="flex justify-between">
               <span>Tax & Curing Fee</span>
-              <span className="font-bold text-gray-900">${tax.toFixed(2)}</span>
+              <span className="font-bold text-gray-900">{formatPrice(tax)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span>Delivery Charges</span>
               {shippingFee === 0 ? (
                 <span className="text-[#2F4B3C] font-bold uppercase text-[9px] tracking-wider bg-[#2F4B3C]/10 border border-[#2F4B3C]/20 px-1.5 py-0.5 rounded">Free Shipping</span>
               ) : (
-                <span className="font-bold text-gray-900">${shippingFee.toFixed(2)}</span>
+                <span className="font-bold text-gray-900">{formatPrice(shippingFee)}</span>
               )}
             </div>
             {shippingFee > 0 && (
               <p className="text-[9px] text-gray-400 font-light leading-relaxed pt-1">
-                Add <span className="font-bold text-[#2F4B3C]">${(50 - subtotal).toFixed(2)}</span> more to receive FREE delivery!
+                Add <span className="font-bold text-[#2F4B3C]">{formatPrice(FREE_DELIVERY_THRESHOLD - subtotal)}</span> more to receive FREE delivery!
               </p>
             )}
           </div>
@@ -157,7 +158,7 @@ const Cart = () => {
 
           <div className="flex justify-between items-baseline">
             <span className="text-xs uppercase tracking-widest font-bold text-gray-800 font-serif">Total Bill</span>
-            <span className="text-lg font-bold text-[#2F4B3C]">${total.toFixed(2)}</span>
+            <span className="text-lg font-bold text-[#2F4B3C]">{formatPrice(total)}</span>
           </div>
 
           <button

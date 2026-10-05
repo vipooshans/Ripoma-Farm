@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { NotificationContext } from '../context/NotificationContext';
 import { Users, Search, DollarSign, Calendar, Filter, Loader, PlusCircle, Edit2, Trash2, ShieldAlert } from 'lucide-react';
+import { formatPrice } from '../utils/currency';
 
 const AdminCustomers = () => {
   const { showToast } = useContext(NotificationContext);
@@ -313,7 +314,7 @@ const AdminCustomers = () => {
                       {cust.orderCount}
                     </td>
                     <td className="p-4 text-center font-black text-[#2F4B3C]">
-                      ${cust.totalSpent.toFixed(2)}
+                      {formatPrice(cust.totalSpent)}
                     </td>
                     <td className="p-4">
                       <div className="space-y-1.5">
