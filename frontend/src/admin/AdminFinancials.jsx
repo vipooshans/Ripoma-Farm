@@ -167,7 +167,7 @@ const AdminFinancials = () => {
           <p className="text-[10px] text-gray-400">Visualize operational costs vs sales receipts.</p>
         </div>
         <div className="h-72 w-full text-xs">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 1, height: 1 }}>
             <AreaChart data={monthlySalesTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
               <XAxis dataKey="month" stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} />

@@ -151,7 +151,7 @@ const AdminOverview = () => {
             <p className="text-[10px] text-gray-400 font-light">Total monthly revenue margins vs net profitability in USD.</p>
           </div>
           <div className="h-64 w-full text-[10px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 1, height: 1 }}>
               <AreaChart data={monthlySalesTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
@@ -183,7 +183,7 @@ const AdminOverview = () => {
                 <span className="text-xs">No orders registered yet</span>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 1, height: 1 }}>
                 <BarChart data={topSellingProducts} layout="vertical" margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f3f4f6" />
                   <XAxis type="number" stroke="#9ca3af" fontSize={9} tickLine={false} axisLine={false} />
