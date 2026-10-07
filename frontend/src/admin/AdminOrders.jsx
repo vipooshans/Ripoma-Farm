@@ -7,7 +7,8 @@ import {
 } from 'lucide-react';
 import { QuantityStepper } from '../components/FormFields';
 import RipomaLogo from '../components/RipomaLogo';
-import { formatPrice } from '../utils/currency';
+import { DEFAULT_SHIPPING_FEE, formatPrice } from '../utils/currency';
+import { formatSriLankanPhoneInput, isValidSriLankanPhone, normalizeSriLankanPhone, PHONE_FORMAT_ERROR, PHONE_PLACEHOLDER } from '../utils/phone';
 
 // Satisfying row flash on completion (Packed / Delivered)
 const useFulfilmentFlash = () => {
@@ -243,23 +244,27 @@ const AdminOrders = () => {
       showToast('Delivery location is not within coverage zones.', 'error');
       return;
     }
+    if (!isValidSriLankanPhone(manualForm.phone)) {
+      showToast(PHONE_FORMAT_ERROR, 'error');
+      return;
+    }
 
     setSubmittingManual(true);
 
     const sub = selectedItems.reduce((acc, i) => acc + (i.price * i.quantity), 0);
     const taxAmt = sub * 0.05;
-    const shipFee = 10;
+    const shipFee = DEFAULT_SHIPPING_FEE;
     const grandTotal = sub + taxAmt + shipFee;
 
     const payload = {
       customerDetails: {
         name: manualForm.name,
         email: manualForm.email,
-        phone: manualForm.phone,
+        phone: normalizeSriLankanPhone(manualForm.phone),
         address: manualForm.street,
         city: manualForm.city,
         postalCode: manualForm.zipCode,
-        country: 'USA'
+        country: 'Sri Lanka'
       },
       items: selectedItems,
       subtotal: sub,
@@ -540,9 +545,10 @@ const AdminOrders = () => {
                   <input
                     type="tel"
                     required
+                    placeholder={PHONE_PLACEHOLDER}
                     value={manualForm.phone}
-                    onChange={(e) => setManualForm({ ...manualForm, phone: e.target.value })}
-                    className="w-full border border-gray-200 outline-none rounded py-2 px-3 text-xs"
+                    onChange={(e) => setManualForm({ ...manualForm, phone: formatSriLankanPhoneInput(e.target.value) })}
+                    className={`w-full border ${manualForm.phone && !isValidSriLankanPhone(manualForm.phone) ? 'border-red-400' : 'border-gray-200'} outline-none rounded py-2 px-3 text-xs`}
                   />
                 </div>
 

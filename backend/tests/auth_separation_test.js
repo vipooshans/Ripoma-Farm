@@ -43,7 +43,7 @@ async function runTests() {
         name: 'Organic Customer John',
         email: testEmail,
         password: 'StrongCustomerPass123!',
-        phone: '+1 555-987-6543'
+        phone: '+94 77 987 6543'
       })
     });
     const customerData = await res2.json();

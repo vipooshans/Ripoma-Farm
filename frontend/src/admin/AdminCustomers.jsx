@@ -3,6 +3,7 @@ import axios from 'axios';
 import { NotificationContext } from '../context/NotificationContext';
 import { Users, Search, DollarSign, Calendar, Filter, Loader, PlusCircle, Edit2, Trash2, ShieldAlert } from 'lucide-react';
 import { formatPrice } from '../utils/currency';
+import { formatSriLankanPhoneInput, isValidSriLankanPhone, normalizeSriLankanPhone, PHONE_FORMAT_ERROR, PHONE_PLACEHOLDER } from '../utils/phone';
 
 const AdminCustomers = () => {
   const { showToast } = useContext(NotificationContext);
@@ -19,6 +20,7 @@ const AdminCustomers = () => {
   
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
 
   // Form states
   const [form, setForm] = useState({
@@ -147,6 +149,7 @@ const AdminCustomers = () => {
       zipCode: '',
       notes: ''
     });
+    setPhoneError('');
     setIsAddOpen(true);
   };
 
@@ -155,12 +158,13 @@ const AdminCustomers = () => {
     setForm({
       name: cust.name,
       email: cust.email,
-      phone: cust.phone,
+      phone: cust.phone === 'N/A' ? '' : cust.phone,
       city: cust.city,
       street: cust.street || '',
       zipCode: cust.zipCode || '',
       notes: cust.notes || ''
     });
+    setPhoneError('');
     setIsEditOpen(true);
   };
 
@@ -169,12 +173,26 @@ const AdminCustomers = () => {
     setIsDeactivateOpen(true);
   };
 
+  const handlePhoneChange = (e) => {
+    const phone = formatSriLankanPhoneInput(e.target.value);
+    setForm(prev => ({ ...prev, phone }));
+    if (phoneError) setPhoneError(isValidSriLankanPhone(phone) ? '' : PHONE_FORMAT_ERROR);
+  };
+
+  const checkPhone = () => {
+    const err = isValidSriLankanPhone(form.phone) ? '' : PHONE_FORMAT_ERROR;
+    setPhoneError(err);
+    if (err) showToast(err, 'error');
+    return !err;
+  };
+
   const handleAddSubmit = async (e) => {
     e.preventDefault();
+    if (!checkPhone()) return;
     setSubmitting(true);
     try {
       // Simulate/register client in mock roster
-      const newCust = { ...form };
+      const newCust = { ...form, phone: normalizeSriLankanPhone(form.phone) };
       setManualList(prev => [...prev, newCust]);
       if (form.notes.trim()) {
         setCustomerNotes(prev => ({ ...prev, [form.email.toLowerCase()]: form.notes }));
@@ -190,10 +208,12 @@ const AdminCustomers = () => {
 
   const handleEditSubmit = (e) => {
     e.preventDefault();
+    if (!checkPhone()) return;
     setSubmitting(true);
     try {
+      const updated = { ...form, phone: normalizeSriLankanPhone(form.phone) };
       // Update manual list if registered there
-      setManualList(prev => prev.map(m => m.email.toLowerCase() === form.email.toLowerCase() ? { ...m, ...form } : m));
+      setManualList(prev => prev.map(m => m.email.toLowerCase() === form.email.toLowerCase() ? { ...m, ...updated } : m));
       
       // Update notes
       setCustomerNotes(prev => ({ ...prev, [form.email.toLowerCase()]: form.notes }));
@@ -396,10 +416,12 @@ const AdminCustomers = () => {
                 <input
                   type="tel"
                   required
+                  placeholder={PHONE_PLACEHOLDER}
                   value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="w-full border border-gray-250/80 outline-none rounded py-2 px-3 text-xs focus:border-[#2F4B3C]"
+                  onChange={handlePhoneChange}
+                  className={`w-full border ${phoneError ? 'border-red-400' : 'border-gray-250/80'} outline-none rounded py-2 px-3 text-xs focus:border-[#2F4B3C]`}
                 />
+                {phoneError && <span className="text-red-500 font-bold text-[9px] block">{phoneError}</span>}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -491,10 +513,12 @@ const AdminCustomers = () => {
                 <input
                   type="tel"
                   required
+                  placeholder={PHONE_PLACEHOLDER}
                   value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="w-full border border-gray-250/80 outline-none rounded py-2 px-3 text-xs focus:border-[#2F4B3C]"
+                  onChange={handlePhoneChange}
+                  className={`w-full border ${phoneError ? 'border-red-400' : 'border-gray-250/80'} outline-none rounded py-2 px-3 text-xs focus:border-[#2F4B3C]`}
                 />
+                {phoneError && <span className="text-red-500 font-bold text-[9px] block">{phoneError}</span>}
               </div>
 
               <div className="grid grid-cols-2 gap-3">

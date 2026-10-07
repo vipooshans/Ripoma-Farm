@@ -59,7 +59,7 @@ const Contact = () => {
               <Phone className="w-6 h-6 text-farm-green shrink-0 mt-1" />
               <div>
                 <h4 className="font-bold text-gray-950 text-sm">Phone Support</h4>
-                <p className="text-xs text-gray-500 mt-1 leading-relaxed">+1 (555) 747-6622</p>
+                <p className="text-xs text-gray-500 mt-1 leading-relaxed">+94 11 274 6622</p>
               </div>
             </div>
 

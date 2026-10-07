@@ -3,6 +3,7 @@ import axios from 'axios';
 import { NotificationContext } from '../context/NotificationContext';
 import { Plus, Calendar, Loader, Check, AlertTriangle, Edit2, Trash2, ShieldAlert } from 'lucide-react';
 import { formatPrice } from '../utils/currency';
+import { formatSriLankanPhoneInput, isValidSriLankanPhone, normalizeSriLankanPhone, PHONE_FORMAT_ERROR, PHONE_PLACEHOLDER } from '../utils/phone';
 
 const AdminWorkers = () => {
   const { showToast } = useContext(NotificationContext);
@@ -104,6 +105,7 @@ const AdminWorkers = () => {
         break;
       case 'phone':
         if (!value.trim()) err = 'Contact phone is required';
+        else if (!isValidSriLankanPhone(value)) err = PHONE_FORMAT_ERROR;
         break;
       case 'hourlyRate':
         const wage = Number(value);
@@ -117,7 +119,8 @@ const AdminWorkers = () => {
   };
 
   const handleFormChange = (e) => {
-    const { name, value } = e.target;
+    const { name } = e.target;
+    const value = name === 'phone' ? formatSriLankanPhoneInput(e.target.value) : e.target.value;
     setForm(prev => ({ ...prev, [name]: value }));
 
     if (touched[name]) {
@@ -160,7 +163,7 @@ const AdminWorkers = () => {
         name: form.name,
         email: form.email,
         password: form.password,
-        phone: form.phone,
+        phone: normalizeSriLankanPhone(form.phone),
         role: `${form.role} | ${form.zone}`,
         hourlyRate: Number(form.hourlyRate)
       };
@@ -215,7 +218,7 @@ const AdminWorkers = () => {
     try {
       const payload = {
         name: form.name,
-        phone: form.phone,
+        phone: normalizeSriLankanPhone(form.phone),
         role: `${form.role} | ${form.zone}`,
         hourlyRate: Number(form.hourlyRate)
       };
@@ -707,6 +710,7 @@ const AdminWorkers = () => {
                   <input
                     type="tel"
                     name="phone"
+                    placeholder={PHONE_PLACEHOLDER}
                     value={form.phone}
                     onChange={handleFormChange}
                     onBlur={handleInputBlur}
@@ -830,6 +834,7 @@ const AdminWorkers = () => {
                   <input
                     type="tel"
                     name="phone"
+                    placeholder={PHONE_PLACEHOLDER}
                     value={form.phone}
                     onChange={handleFormChange}
                     onBlur={handleInputBlur}

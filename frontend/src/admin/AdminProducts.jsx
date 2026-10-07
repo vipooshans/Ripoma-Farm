@@ -201,30 +201,37 @@ const AdminProducts = () => {
       case 'category':
         if (!['Dry Fish', 'Eggs', 'Chicken'].includes(value)) err = 'Must choose a valid category';
         break;
-      case 'basePrice':
+      case 'basePrice': {
         const priceVal = Number(value);
         if (!value) err = 'Selling price is required';
         else if (isNaN(priceVal) || priceVal <= 0) err = 'Price must be greater than 0';
         break;
-      case 'costPrice':
+      }
+      case 'costPrice': {
         const costVal = Number(value);
         if (!value) err = 'Cost price is required';
         else if (isNaN(costVal) || costVal <= 0) err = 'Cost must be greater than 0';
         break;
-      case 'stock':
+      }
+      case 'discount': {
+        const discountVal = Number(value);
+        if (value !== '' && (isNaN(discountVal) || discountVal < 0 || discountVal > 100)) err = 'Discount must be between 0 and 100%';
+        break;
+      }
+      case 'stock': {
         const stockVal = Number(value);
         if (value === '') err = 'Stock is required';
-        else if (isNaN(stockVal) || !Number.isInteger(stockVal) || stockVal < 0) err = 'Stock must be positive integer';
+        else if (isNaN(stockVal) || !Number.isInteger(stockVal) || stockVal < 0) err = 'Stock must be a whole number of 0 or more';
         break;
-      case 'shelfLife':
+      }
+      case 'shelfLife': {
         const life = Number(value);
+        const maxLife = MAX_SHELF_LIFE[currentCategory] || 90;
         if (!value) err = 'Shelf life is required';
-        else if (isNaN(life) || !Number.isInteger(life) || life < 1 || life > 90) err = 'Shelf life must be between 1 and 90 days';
-        else {
-          if (currentCategory === 'Eggs' && life > 30) err = 'Eggs shelf life cannot exceed 30 days';
-          if (currentCategory === 'Chicken' && life > 14) err = 'Chicken shelf life cannot exceed 14 days';
-        }
+        else if (isNaN(life) || !Number.isInteger(life) || life < 1) err = 'Shelf life must be a whole number of days';
+        else if (life > maxLife) err = `${currentCategory} shelf life cannot exceed ${maxLife} days`;
         break;
+      }
       case 'imageUrl':
         if (!value.trim()) err = 'Image link is required';
         break;
@@ -237,7 +244,7 @@ const AdminProducts = () => {
         break;
       case 'harvestDate':
         if (!value) err = 'Harvest date is required';
-        else if (new Date(value) > new Date()) err = 'Harvest date cannot be in the future';
+        else if (value > todayISO()) err = 'Harvest date cannot be in the future';
         break;
       default:
         break;
@@ -247,14 +254,11 @@ const AdminProducts = () => {
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => {
-      const updated = { ...prev, [name]: value };
-      if (name === 'category') {
-        const shelfLifeErr = validateField('shelfLife', updated.shelfLife, value);
-        setErrors(prevErrs => ({ ...prevErrs, shelfLife: shelfLifeErr }));
-      }
-      return updated;
-    });
+    setForm(prev => ({ ...prev, [name]: value }));
+
+    if (name === 'category') {
+      setErrors(prev => ({ ...prev, shelfLife: validateField('shelfLife', form.shelfLife, value) }));
+    }
 
     if (touched[name]) {
       const err = validateField(name, value);
@@ -279,35 +283,37 @@ const AdminProducts = () => {
 
   const handleVariantChange = (idx, field, val) => {
     const updated = [...variants];
-    updated[idx][field] = val;
+    updated[idx] = { ...updated[idx], [field]: val };
     setVariants(updated);
+    if (errors.variants) setErrors(prev => ({ ...prev, variants: '' }));
   };
   const addVariantField = () => setVariants([...variants, { name: '', price: '', costPrice: '', stock: '' }]);
   const removeVariantField = (idx) => setVariants(variants.filter((_, i) => i !== idx));
 
+  // Validates the given fields, marks them touched so messages render, and returns the errors found
+  const validateFields = (fields) => {
+    const fieldErrors = {};
+    fields.forEach(f => { fieldErrors[f] = validateField(f, form[f]); });
+    setErrors(prev => ({ ...prev, ...fieldErrors }));
+    setTouched(prev => ({ ...prev, ...Object.fromEntries(fields.map(f => [f, true])) }));
+    return Object.fromEntries(Object.entries(fieldErrors).filter(([, err]) => err));
+  };
+
+  const validateVariants = () => {
+    const incomplete = variants.find(v => (v.name.trim() || v.price || v.stock) && (!v.name.trim() || !(Number(v.price) > 0)));
+    if (incomplete) return 'Each package option needs a name and a price greater than 0';
+    const badStock = variants.find(v => v.stock !== '' && (!Number.isInteger(Number(v.stock)) || Number(v.stock) < 0));
+    if (badStock) return 'Package option stock must be a whole number of 0 or more';
+    return '';
+  };
+
   // Multi-step modal navigation
   const nextStep = () => {
-    // Validate current step fields
-    let stepFields = [];
-    if (modalStep === 1) stepFields = ['name', 'description', 'category'];
-    if (modalStep === 2) stepFields = ['imageUrl'];
-    if (modalStep === 3) stepFields = ['basePrice', 'costPrice', 'stock'];
-    if (modalStep === 4) stepFields = ['origin', 'harvestDate', 'shelfLife'];
+    const stepErrors = validateFields(STEP_FIELDS[modalStep]);
+    const variantError = modalStep === 3 ? validateVariants() : '';
+    setErrors(prev => ({ ...prev, variants: modalStep === 3 ? variantError : prev.variants }));
 
-    const stepErrors = {};
-    stepFields.forEach(f => {
-      const err = validateField(f, form[f]);
-      if (err) stepErrors[f] = err;
-    });
-
-    setErrors(prev => ({ ...prev, ...stepErrors }));
-    
-    // Mark as touched
-    const touchedFields = {};
-    stepFields.forEach(f => { touchedFields[f] = true; });
-    setTouched(prev => ({ ...prev, ...touchedFields }));
-
-    if (Object.values(stepErrors).some(err => err !== '')) {
+    if (Object.keys(stepErrors).length > 0 || variantError) {
       showToast('Please resolve validation warnings in current step.', 'error');
       return;
     }
@@ -320,16 +326,18 @@ const AdminProducts = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check all fields
-    const allErrors = {};
-    Object.keys(form).forEach(key => {
-      const err = validateField(key, form[key]);
-      if (err) allErrors[key] = err;
-    });
-    setErrors(allErrors);
+    const allErrors = validateFields(Object.values(STEP_FIELDS).flat());
+    const variantError = validateVariants();
+    setErrors(prev => ({ ...prev, variants: variantError }));
+    if (variantError) allErrors.variants = variantError;
 
-    if (Object.values(allErrors).some(err => err !== '')) {
-      showToast('Please fix all form validation errors.', 'error');
+    const firstInvalidStep = Object.keys(STEP_FIELDS)
+      .map(Number)
+      .find(step => STEP_FIELDS[step].some(f => allErrors[f]) || (step === 3 && allErrors.variants));
+
+    if (firstInvalidStep) {
+      setModalStep(firstInvalidStep);
+      showToast(`Please fix the highlighted fields in step ${firstInvalidStep}.`, 'error');
       return;
     }
 
@@ -387,7 +395,7 @@ const AdminProducts = () => {
       setIsModalOpen(false);
       fetchProducts();
     } catch (err) {
-      showToast('Failed to save harvest product details.', 'error');
+      showToast(err.response?.data?.message || 'Failed to save harvest product details.', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -764,10 +772,18 @@ const AdminProducts = () => {
                       <input
                         type="number"
                         name="discount"
+                        min="0"
+                        max="100"
                         value={form.discount}
                         onChange={handleFormChange}
-                        className="w-full border border-gray-200 outline-none rounded py-2 px-3 text-xs focus:border-[#2F4B3C]"
+                        onBlur={handleBlur}
+                        className={getInputClass('discount')}
                       />
+                      {touched.discount && errors.discount && (
+                        <span className="text-red-500 font-bold text-[9px] tracking-wide flex items-center gap-1 mt-0.5">
+                          <AlertTriangle className="w-3 h-3 shrink-0" /> {errors.discount}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -842,6 +858,11 @@ const AdminProducts = () => {
                         </div>
                       ))}
                     </div>
+                    {errors.variants && (
+                      <span className="text-red-500 font-bold text-[9px] tracking-wide flex items-center gap-1 mt-0.5">
+                        <AlertTriangle className="w-3 h-3 shrink-0" /> {errors.variants}
+                      </span>
+                    )}
                   </div>
                 </div>
               )}

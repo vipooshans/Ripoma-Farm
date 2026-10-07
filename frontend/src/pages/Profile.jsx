@@ -9,6 +9,7 @@ import { ValidatedInput, PasswordInputWithMeter } from '../components/FormFields
 import { FarmStoryModal } from '../components/FarmStoryModal';
 import RipomaLogo from '../components/RipomaLogo';
 import { formatPrice } from '../utils/currency';
+import { formatSriLankanPhoneInput, isValidSriLankanPhone, normalizeSriLankanPhone, PHONE_FORMAT_ERROR, PHONE_PLACEHOLDER } from '../utils/phone';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 const isGoogleClientConfigured =
@@ -80,6 +81,7 @@ const Profile = () => {
 
   // Edit forms
   const [profileForm, setProfileForm] = useState({ name: '', phone: '' });
+  const [profilePhoneError, setProfilePhoneError] = useState('');
   const [addressForm, setAddressForm] = useState({ street: '', city: '', state: '', zipCode: '', country: '' });
 
   // Invoice Modal
@@ -183,7 +185,7 @@ const Profile = () => {
       city: savedAddress.city || '',
       state: savedAddress.state || '',
       zipCode: savedAddress.zipCode || '',
-      country: savedAddress.country || 'USA'
+      country: savedAddress.country || 'Sri Lanka'
     });
     fetchOrders();
     fetchNotifications();
@@ -314,7 +316,14 @@ const Profile = () => {
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-    const res = await updateProfile(profileForm.name, profileForm.phone, addressForm);
+    const phone = profileForm.phone.trim();
+    if (phone && !isValidSriLankanPhone(phone)) {
+      setProfilePhoneError(PHONE_FORMAT_ERROR);
+      showToast(PHONE_FORMAT_ERROR, 'error');
+      return;
+    }
+    setProfilePhoneError('');
+    const res = await updateProfile(profileForm.name, phone ? normalizeSriLankanPhone(phone) : '', addressForm);
     if (res.success) {
       showToast('Profile updated successfully!', 'success');
     } else {
@@ -776,10 +785,21 @@ const Profile = () => {
                     <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Mobile Number</label>
                     <input
                       type="tel"
+                      placeholder={PHONE_PLACEHOLDER}
                       value={profileForm.phone}
-                      onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                      className="w-full border border-gray-200 focus:border-[#2F4B3C] focus:ring-1 focus:ring-[#2F4B3C] outline-none rounded py-2.5 px-3"
+                      onChange={(e) => {
+                        const phone = formatSriLankanPhoneInput(e.target.value);
+                        setProfileForm({ ...profileForm, phone });
+                        if (profilePhoneError) setProfilePhoneError(phone && !isValidSriLankanPhone(phone) ? PHONE_FORMAT_ERROR : '');
+                      }}
+                      onBlur={() => setProfilePhoneError(profileForm.phone.trim() && !isValidSriLankanPhone(profileForm.phone) ? PHONE_FORMAT_ERROR : '')}
+                      className={`w-full border ${profilePhoneError ? 'border-red-400 focus:border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-[#2F4B3C] focus:ring-[#2F4B3C]'} focus:ring-1 outline-none rounded py-2.5 px-3`}
                     />
+                    {profilePhoneError && (
+                      <span className="text-red-500 font-bold text-[9px] tracking-wide flex items-center gap-1 mt-0.5">
+                        <AlertTriangle className="w-3 h-3 shrink-0" /> {profilePhoneError}
+                      </span>
+                    )}
                   </div>
                 </div>
 

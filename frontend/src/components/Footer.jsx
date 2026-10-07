@@ -104,7 +104,7 @@ const Footer = () => {
               <ul className="space-y-3.5 text-xs">
                 {[
                   { Icon: MapPin, text: '10 Organic Way, Agro Valley, GreenState' },
-                  { Icon: Phone, text: '+1 (555) 747-6622' },
+                  { Icon: Phone, text: '+94 11 274 6622' },
                   { Icon: Mail, text: 'support@ripomafarm.com' },
                 ].map(({ Icon, text }) => (
                   <li key={text} className="flex items-start gap-2" style={{ color: 'rgba(242,232,213,0.65)' }}>

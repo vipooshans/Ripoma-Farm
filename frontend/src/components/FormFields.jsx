@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Eye, EyeOff, Check, AlertCircle, Plus, Minus, CreditCard, ShieldCheck } from 'lucide-react';
+import { formatSriLankanPhoneInput, PHONE_PLACEHOLDER } from '../utils/phone';
 
 /**
  * ValidatedInput
@@ -259,18 +260,8 @@ export const PasswordInputWithMeter = ({
  * Real-time phone number auto-formatter.
  */
 export const PhoneInput = ({ value, onChange, onBlur, error, touched, isValid, label = 'Phone Number', required = false }) => {
-  const formatPhoneNumber = (input) => {
-    if (!input) return '';
-    const digits = input.replace(/\D/g, '');
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
-  };
-
   const handleChange = (e) => {
-    const raw = e.target.value;
-    const formatted = formatPhoneNumber(raw);
-    onChange({ target: { name: 'phone', value: formatted } });
+    onChange({ target: { name: 'phone', value: formatSriLankanPhoneInput(e.target.value) } });
   };
 
   return (
@@ -286,7 +277,7 @@ export const PhoneInput = ({ value, onChange, onBlur, error, touched, isValid, l
       touched={touched}
       isValid={isValid}
       required={required}
-      placeholder="(555) 019-2834"
+      placeholder={PHONE_PLACEHOLDER}
     />
   );
 };

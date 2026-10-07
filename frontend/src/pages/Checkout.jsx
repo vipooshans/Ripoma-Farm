@@ -7,6 +7,7 @@ import { ShieldCheck, Truck, CreditCard, ChevronRight, CheckCircle, Lock, AlertT
 import { ValidatedInput, PhoneInput, CreditCardInput } from '../components/FormFields';
 import RipomaLogo from '../components/RipomaLogo';
 import { formatPrice } from '../utils/currency';
+import { isValidSriLankanPhone, normalizeSriLankanPhone, PHONE_FORMAT_ERROR } from '../utils/phone';
 
 const Checkout = () => {
   const { cartItems, subtotal, tax, shippingFee, total, placeOrder } = useContext(CartContext);
@@ -32,7 +33,7 @@ const Checkout = () => {
     city: '',
     state: '',
     zipCode: '',
-    country: 'USA'
+    country: 'Sri Lanka'
   });
 
   // Payment gateway simulation selection
@@ -71,7 +72,7 @@ const Checkout = () => {
       city: user.address?.city || '',
       state: user.address?.state || '',
       zipCode: user.address?.zipCode || '',
-      country: user.address?.country || 'USA'
+      country: user.address?.country || 'Sri Lanka'
     });
   }, [user, navigate]);
 
@@ -102,7 +103,7 @@ const Checkout = () => {
         break;
       case 'phone':
         if (!value.trim()) err = 'Contact phone is required';
-        else if (!/^\+?[\d\s-]{7,15}$/.test(value)) err = 'Invalid phone format (e.g. +1 555-0199)';
+        else if (!isValidSriLankanPhone(value)) err = PHONE_FORMAT_ERROR;
         break;
       case 'street':
         if (!value.trim()) err = 'Street address is required';
@@ -232,7 +233,7 @@ const Checkout = () => {
 
     // Simulate payment processing delay
     setTimeout(async () => {
-      const response = await placeOrder(formData, paymentMethod);
+      const response = await placeOrder({ ...formData, phone: normalizeSriLankanPhone(formData.phone) }, paymentMethod);
       setLoading(false);
       
       if (response.success) {

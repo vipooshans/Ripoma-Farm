@@ -16,7 +16,7 @@ const SettingSchema = new mongoose.Schema({
   },
   contactPhone: {
     type: String,
-    default: '+1 (555) 019-9283',
+    default: '+94 11 274 6622',
   },
   address: {
     type: String,

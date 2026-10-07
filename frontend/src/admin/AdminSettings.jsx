@@ -6,6 +6,7 @@ import {
   CheckCircle, Key, Eye, EyeOff, Lock, Zap, Download, Shield, RefreshCw
 } from 'lucide-react';
 import { DEFAULT_SHIPPING_FEE } from '../utils/currency';
+import { formatSriLankanPhoneInput, isValidSriLankanPhone, normalizeSriLankanPhone, PHONE_FORMAT_ERROR, PHONE_PLACEHOLDER } from '../utils/phone';
 
 /* ── Password Strength Meter ────────────────────────────────────── */
 const strengthLevels = [
@@ -107,7 +108,7 @@ const AdminSettings = () => {
   const [form, setForm] = useState({
     companyName: 'RIPOMA Farm',
     contactEmail: 'contact@ripomafarm.com',
-    contactPhone: '+1 (555) 019-9283',
+    contactPhone: '+94 11 274 6622',
     address: '128 Agro Valley Road, Organic City',
     taxRate: '5',
     shippingFee: String(DEFAULT_SHIPPING_FEE),
@@ -142,7 +143,7 @@ const AdminSettings = () => {
         setForm({
           companyName: data.companyName || 'RIPOMA Farm',
           contactEmail: data.contactEmail || 'contact@ripomafarm.com',
-          contactPhone: data.contactPhone || '+1 (555) 019-9283',
+          contactPhone: data.contactPhone || '+94 11 274 6622',
           address: data.address || '128 Agro Valley Road, Organic City',
           taxRate: (data.taxRate || 5).toString(),
           shippingFee: (data.shippingFee || DEFAULT_SHIPPING_FEE).toString(),
@@ -168,7 +169,8 @@ const AdminSettings = () => {
         if (!value.trim()) return 'Support email is required';
         return !/\S+@\S+\.\S+/.test(value) ? 'Invalid email format' : '';
       case 'contactPhone':
-        return !value.trim() ? 'Contact phone is required' : '';
+        if (!value.trim()) return 'Contact phone is required';
+        return isValidSriLankanPhone(value) ? '' : PHONE_FORMAT_ERROR;
       case 'address':
         return !value.trim() ? 'Physical address is required' : '';
       case 'taxRate': {
@@ -208,7 +210,7 @@ const AdminSettings = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    const val = type === 'checkbox' ? checked : value;
+    const val = type === 'checkbox' ? checked : name === 'contactPhone' ? formatSriLankanPhoneInput(value) : value;
     setForm(prev => ({ ...prev, [name]: val }));
     if (touched[name]) setErrors(prev => ({ ...prev, [name]: validateField(name, val) }));
   };
@@ -247,6 +249,7 @@ const AdminSettings = () => {
     try {
       await axios.put('/api/settings', {
         ...form,
+        contactPhone: normalizeSriLankanPhone(form.contactPhone),
         taxRate: Number(form.taxRate),
         shippingFee: Number(form.shippingFee),
       });
@@ -408,7 +411,7 @@ const AdminSettings = () => {
               <div className="space-y-1">
                 <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Contact Phone</label>
                 <input
-                  type="text" name="contactPhone" value={form.contactPhone}
+                  type="tel" name="contactPhone" value={form.contactPhone} placeholder={PHONE_PLACEHOLDER}
                   onChange={handleChange} onBlur={handleBlur}
                   className={getInputClass('contactPhone')}
                 />

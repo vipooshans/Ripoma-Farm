@@ -98,7 +98,7 @@ const seedData = async () => {
       two_factor_enabled: true,
       two_factor_secret: 'RIPOMA-SECURE-2FA-FARM',
       status: 'active',
-      phone: '+1 (555) 012-3456',
+      phone: '+94 77 012 3456',
       failedLoginAttempts: 0,
       lockoutUntil: null,
       loginHistory: [],
@@ -114,7 +114,7 @@ const seedData = async () => {
       two_factor_enabled: true,
       two_factor_secret: 'RIPOMA-SECURE-2FA-FARM',
       status: 'active',
-      phone: '+1 (555) 012-7890',
+      phone: '+94 77 012 7890',
       failedLoginAttempts: 0,
       lockoutUntil: null,
       loginHistory: [],
@@ -161,7 +161,7 @@ const seedData = async () => {
       name: 'Sarah Customer',
       email: 'customer@ripomafarm.com',
       password: customerPassword,
-      phone: '+1 (555) 012-5555',
+      phone: '+94 77 012 5555',
       addresses: [{ ...sarahAddress, isDefault: true }],
       loyalty_points: 185,
       wishlist: [IDS.eggsA, IDS.anchovy],
@@ -436,7 +436,7 @@ const seedData = async () => {
       key: 'global_settings',
       companyName: 'RIPOMA Farm & Foods',
       contactEmail: 'support@ripomafarm.com',
-      contactPhone: '+1 (555) 747-6622',
+      contactPhone: '+94 11 274 6622',
       address: '10 Organic Way, Agro Valley, GreenState',
       taxRate: 5,
       shippingFee: 8.50,
@@ -454,7 +454,7 @@ const seedData = async () => {
       userId: IDS.workerDave,
       name: 'Worker Dave',
       email: 'worker@ripomafarm.com',
-      phone: '+1 (555) 012-7890',
+      phone: '+94 77 012 7890',
       status: 'active',
       role: 'Poultry Supervisor',
       hourlyRate: 18,
@@ -516,7 +516,7 @@ const seedData = async () => {
     {
       _id: IDS.orderSarahDelivered,
       user: IDS.customerSarah,
-      customerDetails: { name: 'Sarah Customer', email: 'customer@ripomafarm.com', phone: '+1 (555) 012-5555', ...sarahAddress },
+      customerDetails: { name: 'Sarah Customer', email: 'customer@ripomafarm.com', phone: '+94 77 012 5555', ...sarahAddress },
       items: [
         { productId: IDS.eggsA, name: 'Organic Farm Fresh Eggs (Brown)', image: 'https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=600', variantName: 'Tray of 30 (Grade A)', quantity: 2, price: 9.99, costPrice: 4.50 },
         { productId: IDS.anchovy, name: 'Sun-Dried Anchovy (Neetholi)', image: 'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=600', variantName: '100g Pack', quantity: 1, price: 8.50, costPrice: 4.20 },
@@ -535,7 +535,7 @@ const seedData = async () => {
     {
       _id: IDS.orderSarahPending,
       user: IDS.customerSarah,
-      customerDetails: { name: 'Sarah Customer', email: 'customer@ripomafarm.com', phone: '+1 (555) 012-5555', ...sarahAddress },
+      customerDetails: { name: 'Sarah Customer', email: 'customer@ripomafarm.com', phone: '+94 77 012 5555', ...sarahAddress },
       items: [
         { productId: IDS.wholeChicken, name: 'Whole Broiler Chicken', image: 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600', variantName: '1.5kg Size', quantity: 1, price: 17.80, costPrice: 8.50 },
       ],
@@ -553,7 +553,7 @@ const seedData = async () => {
     {
       _id: IDS.orderSarahShipped,
       user: IDS.customerSarah,
-      customerDetails: { name: 'Sarah Customer', email: 'customer@ripomafarm.com', phone: '+1 (555) 012-5555', ...sarahAddress },
+      customerDetails: { name: 'Sarah Customer', email: 'customer@ripomafarm.com', phone: '+94 77 012 5555', ...sarahAddress },
       items: [
         { productId: IDS.drumsticks, name: 'Farm Chicken Drumsticks', image: 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=600', variantName: '1kg Pack', quantity: 2, price: 12.50, costPrice: 5.80 },
         { productId: IDS.eggsB, name: 'Farm Eggs Tray Pack (Grade B)', image: 'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=600', variantName: 'Tray of 12 (Grade B)', quantity: 1, price: 4.50, costPrice: 2.10 },
@@ -572,7 +572,7 @@ const seedData = async () => {
     {
       _id: IDS.orderSarahProcessing,
       user: IDS.customerSarah,
-      customerDetails: { name: 'Sarah Customer', email: 'customer@ripomafarm.com', phone: '+1 (555) 012-5555', ...sarahAddress },
+      customerDetails: { name: 'Sarah Customer', email: 'customer@ripomafarm.com', phone: '+94 77 012 5555', ...sarahAddress },
       items: [
         { productId: IDS.wings, name: 'Pasture Chicken Wings', image: 'https://images.unsplash.com/photo-1527477396000-e27163b50860?w=600', variantName: '500g Pack', quantity: 2, price: 7.50, costPrice: 3.40 },
       ],
