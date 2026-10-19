@@ -10,12 +10,12 @@ import Category from '../models/Category.js';
 import Order from '../models/Order.js';
 import InventoryLog from '../models/Inventory.js';
 import Transaction from '../models/Transaction.js';
-import Worker from '../models/Worker.js';
+import Worker, { DEFAULT_HOURLY_RATE } from '../models/Worker.js';
 import Setting from '../models/Setting.js';
 import Notification from '../models/Notification.js';
 import AuditLog from '../models/AuditLog.js';
 import { writeData } from './jsonDb.js';
-import { orderToLkr, productToLkr, settingsToLkr, transactionToLkr, workerToLkr } from './currency.js';
+import { USD_TO_LKR_RATE, orderToLkr, productToLkr, settingsToLkr, transactionToLkr, workerToLkr } from './currency.js';
 
 dotenv.config();
 
@@ -448,6 +448,10 @@ const seedData = async () => {
   ];
 
   // 6. Workers
+  // Authored in USD like the rest of the sample catalog. workerToLkr multiplies
+  // by USD_TO_LKR_RATE, so this lands on DEFAULT_HOURLY_RATE (4500 LKR) — the
+  // same base wage new workers get when the API omits hourlyRate.
+  const seedHourlyRateUsd = DEFAULT_HOURLY_RATE / USD_TO_LKR_RATE;
   const workers = [
     {
       _id: IDS.workerRecDave,
@@ -457,7 +461,7 @@ const seedData = async () => {
       phone: '+94 77 012 7890',
       status: 'active',
       role: 'Poultry Supervisor',
-      hourlyRate: 18,
+      hourlyRate: seedHourlyRateUsd,
       tasks: [
         { _id: '660f1234b123456789abcd01', title: 'Feed Chickens in Barn B', description: 'Ensure the corn feeder is full before 5 PM', status: 'completed', assignedDate: isoDaysAgo(1) },
         { _id: '660f1234b123456789abcd02', title: 'Gather eggs from Barn A', description: 'Collect and grade brown eggs into trays', status: 'in_progress', assignedDate: new Date().toISOString() },
@@ -477,7 +481,7 @@ const seedData = async () => {
       phone: '+94 77 555 2100',
       status: 'active',
       role: 'Packager',
-      hourlyRate: 15,
+      hourlyRate: seedHourlyRateUsd,
       tasks: [
         { _id: '660f1234b123456789abcd11', title: 'Pack Grade A egg trays', description: 'Stamp and crate 40 trays for tomorrow’s van', status: 'completed', assignedDate: isoDaysAgo(1) },
         { _id: '660f1234b123456789abcd12', title: 'Label dry-fish 250g packs', description: 'Neetholi and Chemmeen SKUs for weekend orders', status: 'in_progress', assignedDate: new Date().toISOString() },
@@ -497,7 +501,7 @@ const seedData = async () => {
       phone: '+94 76 555 3344',
       status: 'active',
       role: 'Coastal Fisher',
-      hourlyRate: 16,
+      hourlyRate: seedHourlyRateUsd,
       tasks: [
         { _id: '660f1234b123456789abcd21', title: 'Morning anchovy harvest', description: 'Bring catch to solar drying racks', status: 'completed', assignedDate: isoDaysAgo(1) },
         { _id: '660f1234b123456789abcd22', title: 'Turn drying mackerel', description: 'Flip racks at 10 AM and 3 PM', status: 'in_progress', assignedDate: new Date().toISOString() },

@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 
+// Base wage for workers created without an explicit rate. Seed USD amounts
+// convert to this same LKR figure (see seed.js).
+export const DEFAULT_HOURLY_RATE = 4500;
+
 const TaskSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, default: '' },
@@ -37,7 +41,7 @@ const WorkerSchema = new mongoose.Schema({
   },
   hourlyRate: {
     type: Number,
-    default: 4500,
+    default: DEFAULT_HOURLY_RATE,
   },
   tasks: [TaskSchema],
   attendance: [{

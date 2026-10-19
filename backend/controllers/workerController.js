@@ -1,4 +1,4 @@
-import Worker from '../models/Worker.js';
+import Worker, { DEFAULT_HOURLY_RATE } from '../models/Worker.js';
 import Admin, { DEFAULT_ROLE_PERMISSIONS } from '../models/Admin.js';
 import { jsonDb } from '../utils/jsonDb.js';
 import bcrypt from 'bcryptjs';
@@ -81,7 +81,7 @@ export const addWorker = async (req, res) => {
         email: cleanEmail,
         phone: phone || '',
         role: role || 'Staff/Worker',
-        hourlyRate: Number(hourlyRate || 4500),
+        hourlyRate: Number(hourlyRate || DEFAULT_HOURLY_RATE),
         tasks: [],
         attendance: [],
       });
@@ -119,7 +119,7 @@ export const addWorker = async (req, res) => {
         phone: phone || '',
         status: 'active',
         role: role || 'Staff/Worker',
-        hourlyRate: Number(hourlyRate || 4500),
+        hourlyRate: Number(hourlyRate || DEFAULT_HOURLY_RATE),
         tasks: [],
         attendance: [],
       });
