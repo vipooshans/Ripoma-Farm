@@ -46,6 +46,22 @@ const SettingSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  bankName: {
+    type: String,
+    default: "People's Bank",
+  },
+  bankAccountName: {
+    type: String,
+    default: 'RIPOMA GLOBAL TRADIN',
+  },
+  bankAccountNumber: {
+    type: String,
+    default: '255100110082556',
+  },
+  whatsappNumber: {
+    type: String,
+    default: '0772078909',
+  },
   heroSlogan: {
     type: String,
     default: "Farm Fresh Products Delivered With Quality You Can Trust",

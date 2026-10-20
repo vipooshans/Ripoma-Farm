@@ -28,7 +28,7 @@ export const getSettings = async (req, res) => {
 // @route   PUT /api/settings
 // @access  Private/Admin
 export const updateSettings = async (req, res) => {
-  const { companyName, contactEmail, contactPhone, address, taxRate, shippingFee, stripeEnabled, paypalEnabled, cashOnDeliveryEnabled } = req.body;
+  const { companyName, contactEmail, contactPhone, address, taxRate, shippingFee, stripeEnabled, paypalEnabled, cashOnDeliveryEnabled, bankName, bankAccountName, bankAccountNumber, whatsappNumber } = req.body;
 
   try {
     let updated = null;
@@ -47,6 +47,10 @@ export const updateSettings = async (req, res) => {
       if (stripeEnabled !== undefined) settings.stripeEnabled = stripeEnabled;
       if (paypalEnabled !== undefined) settings.paypalEnabled = paypalEnabled;
       if (cashOnDeliveryEnabled !== undefined) settings.cashOnDeliveryEnabled = cashOnDeliveryEnabled;
+      if (bankName !== undefined) settings.bankName = bankName;
+      if (bankAccountName !== undefined) settings.bankAccountName = bankAccountName;
+      if (bankAccountNumber !== undefined) settings.bankAccountNumber = bankAccountNumber;
+      if (whatsappNumber !== undefined) settings.whatsappNumber = whatsappNumber;
 
       updated = await settings.save();
     } else {
@@ -65,6 +69,10 @@ export const updateSettings = async (req, res) => {
         stripeEnabled: stripeEnabled !== undefined ? stripeEnabled : settings.stripeEnabled,
         paypalEnabled: paypalEnabled !== undefined ? paypalEnabled : settings.paypalEnabled,
         cashOnDeliveryEnabled: cashOnDeliveryEnabled !== undefined ? cashOnDeliveryEnabled : settings.cashOnDeliveryEnabled,
+        bankName: bankName !== undefined ? bankName : (settings.bankName || "People's Bank"),
+        bankAccountName: bankAccountName !== undefined ? bankAccountName : (settings.bankAccountName || 'RIPOMA GLOBAL TRADIN'),
+        bankAccountNumber: bankAccountNumber !== undefined ? bankAccountNumber : (settings.bankAccountNumber || '255100110082556'),
+        whatsappNumber: whatsappNumber !== undefined ? whatsappNumber : (settings.whatsappNumber || '0772078909'),
       });
     }
     res.json(updated);

@@ -124,7 +124,7 @@ export const createOrder = async (req, res) => {
         tax,
         total,
         paymentMethod,
-        paymentStatus: paymentMethod === 'Cash on Delivery' ? 'pending' : 'paid',
+        paymentStatus: (paymentMethod === 'Cash on Delivery' || paymentMethod.includes('WhatsApp') || paymentMethod.includes('Bank')) ? 'pending' : 'paid',
         invoiceNumber,
       });
 
@@ -167,7 +167,7 @@ export const createOrder = async (req, res) => {
         tax: Number(tax),
         total: Number(total),
         paymentMethod,
-        paymentStatus: paymentMethod === 'Cash on Delivery' ? 'pending' : 'paid',
+        paymentStatus: (paymentMethod === 'Cash on Delivery' || paymentMethod.includes('WhatsApp') || paymentMethod.includes('Bank')) ? 'pending' : 'paid',
         orderStatus: 'Pending',
         invoiceNumber,
       });

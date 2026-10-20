@@ -592,6 +592,7 @@ const AdminOrders = () => {
                     onChange={(e) => setManualForm({ ...manualForm, paymentMethod: e.target.value })}
                     className="w-full border border-gray-200 outline-none rounded py-2 px-3 text-xs bg-white"
                   >
+                    <option value="Bank Transfer (WhatsApp)">Bank Transfer (WhatsApp)</option>
                     <option value="Stripe">Stripe (Card Payment)</option>
                     <option value="Cash on Delivery">Cash on Delivery (COD)</option>
                   </select>

@@ -114,6 +114,10 @@ const AdminSettings = () => {
     shippingFee: String(DEFAULT_SHIPPING_FEE),
     stripeEnabled: true,
     cashOnDeliveryEnabled: true,
+    bankName: "People's Bank",
+    bankAccountName: 'RIPOMA GLOBAL TRADIN',
+    bankAccountNumber: '255100110082556',
+    whatsappNumber: '0772078909',
   });
 
   /* ── Security ── */
@@ -149,6 +153,10 @@ const AdminSettings = () => {
           shippingFee: (data.shippingFee || DEFAULT_SHIPPING_FEE).toString(),
           stripeEnabled: data.stripeEnabled !== undefined ? data.stripeEnabled : true,
           cashOnDeliveryEnabled: data.cashOnDeliveryEnabled !== undefined ? data.cashOnDeliveryEnabled : true,
+          bankName: data.bankName || "People's Bank",
+          bankAccountName: data.bankAccountName || 'RIPOMA GLOBAL TRADIN',
+          bankAccountNumber: data.bankAccountNumber || '255100110082556',
+          whatsappNumber: data.whatsappNumber || '0772078909',
         });
       }
     } catch {
@@ -516,6 +524,55 @@ const AdminSettings = () => {
                   </div>
                 </label>
               ))}
+            </div>
+
+            {/* Bank Transfer & WhatsApp Settings */}
+            <div className="space-y-4 border-t border-gray-50 pt-4">
+              <h4 className="font-bold text-[#2F4B3C] text-xs font-serif pb-1 border-b border-gray-50">
+                Bank Transfer &amp; WhatsApp Payment Details
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">Bank Name</label>
+                  <input
+                    type="text"
+                    name="bankName"
+                    value={form.bankName || ''}
+                    onChange={handleChange}
+                    className="w-full border border-gray-150/60 outline-none rounded-lg p-2.5 text-xs focus:border-[#2F4B3C]"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">Beneficiary Name</label>
+                  <input
+                    type="text"
+                    name="bankAccountName"
+                    value={form.bankAccountName || ''}
+                    onChange={handleChange}
+                    className="w-full border border-gray-150/60 outline-none rounded-lg p-2.5 text-xs focus:border-[#2F4B3C]"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">Bank Account Number</label>
+                  <input
+                    type="text"
+                    name="bankAccountNumber"
+                    value={form.bankAccountNumber || ''}
+                    onChange={handleChange}
+                    className="w-full border border-gray-150/60 outline-none rounded-lg p-2.5 text-xs font-mono focus:border-[#2F4B3C]"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">WhatsApp Verification Phone</label>
+                  <input
+                    type="text"
+                    name="whatsappNumber"
+                    value={form.whatsappNumber || ''}
+                    onChange={handleChange}
+                    className="w-full border border-gray-150/60 outline-none rounded-lg p-2.5 text-xs font-mono focus:border-[#2F4B3C]"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
