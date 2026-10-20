@@ -55,8 +55,6 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [successOrder, setSuccessOrder] = useState(null);
 
-  const serviceableCities = ['Organic City', 'Green Valley', 'Bay Area', 'Organic Hills'];
-
   // Prepopulate details
   useEffect(() => {
     if (!user) {
@@ -111,9 +109,6 @@ const Checkout = () => {
         break;
       case 'city':
         if (!value.trim()) err = 'City is required';
-        else if (!serviceableCities.includes(value.trim())) {
-          err = "We don't deliver here yet. (Available: Organic City, Green Valley, Bay Area)";
-        }
         break;
       case 'zipCode':
         if (!value.trim()) err = 'Postal code is required';
@@ -333,7 +328,7 @@ const Checkout = () => {
               <h3 className="text-lg font-serif text-[#2F4B3C] font-semibold flex items-center gap-2">
                 <Truck className="w-5 h-5 text-[#A65D3D]" /> Delivery & Sourcing Address
               </h3>
-              {formData.city && serviceableCities.includes(formData.city) && (
+              {formData.city && formData.city.trim() && !addressErrors.city && (
                 <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full text-xs font-bold animate-pop-scale">
                   <MapPin className="w-3.5 h-3.5 text-emerald-600" /> Serviceable Zone Pin Confirmed
                 </div>
@@ -392,7 +387,7 @@ const Checkout = () => {
                     error={addressErrors.city}
                     touched={addressTouched.city}
                     isValid={!addressErrors.city}
-                    placeholder="Organic City"
+                    placeholder="Enter city"
                     required
                   />
                 </div>

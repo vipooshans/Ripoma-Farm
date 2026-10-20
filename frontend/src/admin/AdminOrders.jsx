@@ -60,8 +60,6 @@ const AdminOrders = () => {
   const [isSlipOpen, setIsSlipOpen] = useState(false);
   const [activeSlipOrder, setActiveSlipOrder] = useState(null);
 
-  const serviceableCities = ['Organic City', 'Green Valley', 'Bay Area', 'Organic Hills'];
-
   // Load orders & products
   const fetchData = async () => {
     try {
@@ -240,8 +238,8 @@ const AdminOrders = () => {
       showToast('Manual order must have at least one product.', 'error');
       return;
     }
-    if (!serviceableCities.includes(manualForm.city)) {
-      showToast('Delivery location is not within coverage zones.', 'error');
+    if (!manualForm.city.trim()) {
+      showToast('Delivery city is required.', 'error');
       return;
     }
     if (!isValidSriLankanPhone(manualForm.phone)) {
@@ -566,13 +564,14 @@ const AdminOrders = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">City</label>
-                    <select
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Colombo, Kandy"
                       value={manualForm.city}
                       onChange={(e) => setManualForm({ ...manualForm, city: e.target.value })}
-                      className="w-full border border-gray-200 outline-none rounded py-2 px-3 text-xs bg-white"
-                    >
-                      {serviceableCities.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
+                      className="w-full border border-gray-200 outline-none rounded py-2 px-3 text-xs"
+                    />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Zip Code</label>
