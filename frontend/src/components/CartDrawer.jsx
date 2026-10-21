@@ -114,6 +114,10 @@ const CartDrawer = () => {
                     <img 
                       src={item.image} 
                       alt={item.name} 
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600';
+                      }}
                       className="w-16 h-16 rounded object-cover shrink-0 bg-gray-50 border border-gray-100"
                     />
                     

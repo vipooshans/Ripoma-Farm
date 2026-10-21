@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import { NotificationContext } from '../context/NotificationContext';
-import { ShieldCheck, Truck, ChevronRight, CheckCircle, AlertTriangle, MapPin, Building2, Landmark, Copy, Check, Phone, HelpCircle } from 'lucide-react';
+import { ShieldCheck, Truck, ChevronRight, CheckCircle, AlertTriangle, MapPin, Building2, Landmark, Copy, Check, Phone, HelpCircle, Clock, Lock } from 'lucide-react';
 import { ValidatedInput, PhoneInput } from '../components/FormFields';
 import RipomaLogo from '../components/RipomaLogo';
 import { formatPrice } from '../utils/currency';
@@ -607,7 +607,15 @@ const Checkout = () => {
               {cartItems.map((item, idx) => (
                 <div key={idx} className="flex gap-3 justify-between items-center text-xs">
                   <div className="flex gap-2.5 items-center min-w-0">
-                    <img src={item.image} alt={item.name} className="w-8 h-8 rounded object-cover bg-gray-50 border border-gray-100" />
+                    <img 
+                      src={item.image} 
+                      alt={item.name} 
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600';
+                      }}
+                      className="w-8 h-8 rounded object-cover bg-gray-50 border border-gray-100" 
+                    />
                     <div className="min-w-0">
                       <h4 className="font-bold text-gray-800 truncate text-[11px]">{item.name}</h4>
                       <span className="text-[9px] text-gray-400 font-light">{item.variantName ? `${item.variantName} x ` : ''}{item.quantity} units</span>
