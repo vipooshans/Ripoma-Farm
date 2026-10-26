@@ -1,5 +1,27 @@
 import axios from 'axios';
 
+// Configure backend API base URL for production hosting
+const resolveBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+  }
+  // If hosted in production on a custom domain (e.g. farm.ripomaglobal.org), target Render backend
+  if (
+    typeof window !== 'undefined' &&
+    window.location.hostname !== 'localhost' &&
+    window.location.hostname !== '127.0.0.1'
+  ) {
+    return 'https://ripoma-farm.onrender.com';
+  }
+  // Local development uses Vite proxy to localhost backend
+  return '';
+};
+
+const apiBaseUrl = resolveBaseUrl();
+if (apiBaseUrl) {
+  axios.defaults.baseURL = apiBaseUrl;
+}
+
 const CUSTOMER_SESSION_EVENT = 'ripoma-customer-session';
 const ADMIN_SESSION_EVENT = 'ripoma-admin-session';
 
