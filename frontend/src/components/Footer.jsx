@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Globe, ArrowUp } from 'lucide-react';
+import { Mail, Phone, MapPin, Globe, ArrowUp, Clock, ExternalLink } from 'lucide-react';
 import RipomaLogo from './RipomaLogo';
 import { TornEdgeDivider } from './RusticComponents';
 
@@ -100,18 +100,41 @@ const Footer = () => {
 
             {/* Contact */}
             <div className="md:col-span-3 space-y-4">
-              <h4 className="font-handwritten font-bold text-base" style={{ color: '#C99A3A' }}>Homestead Office</h4>
-              <ul className="space-y-3.5 text-xs">
-                {[
-                  { Icon: MapPin, text: '10 Organic Way, Agro Valley, GreenState' },
-                  { Icon: Phone, text: '+94 11 274 6622' },
-                  { Icon: Mail, text: 'support@ripomafarm.com' },
-                ].map(({ Icon, text }) => (
-                  <li key={text} className="flex items-start gap-2" style={{ color: 'rgba(242,232,213,0.65)' }}>
-                    <Icon className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#C99A3A' }} />
-                    <span className="font-light">{text}</span>
-                  </li>
-                ))}
+              <h4 className="font-handwritten font-bold text-base" style={{ color: '#C99A3A' }}>Contact &amp; Support</h4>
+              <ul className="space-y-3 text-xs">
+                <li className="flex items-start gap-2" style={{ color: 'rgba(242,232,213,0.65)' }}>
+                  <ExternalLink className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#C99A3A' }} />
+                  <a
+                    href="https://ripomaglobal.org/customer/help"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-light hover:text-white transition-colors underline underline-offset-2"
+                  >
+                    Contact Form
+                  </a>
+                </li>
+                <li className="flex items-start gap-2" style={{ color: 'rgba(242,232,213,0.65)' }}>
+                  <Mail className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#C99A3A' }} />
+                  <a
+                    href="mailto:support@ripomaglobal.com"
+                    className="font-light hover:text-white transition-colors"
+                  >
+                    support@ripomaglobal.com
+                  </a>
+                </li>
+                <li className="flex items-start gap-2" style={{ color: 'rgba(242,232,213,0.65)' }}>
+                  <Phone className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#C99A3A' }} />
+                  <a
+                    href="tel:+94742522230"
+                    className="font-light hover:text-white transition-colors"
+                  >
+                    +94 74 252 2230
+                  </a>
+                </li>
+                <li className="flex items-start gap-2" style={{ color: 'rgba(242,232,213,0.65)' }}>
+                  <Clock className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#C99A3A' }} />
+                  <span className="font-light">Mon–Fri, 9am–6pm EST</span>
+                </li>
               </ul>
             </div>
           </div>
