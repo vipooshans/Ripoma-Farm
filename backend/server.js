@@ -68,8 +68,8 @@ app.use(notFound);
 app.use(errorHandler);
 
 const PORT = Number(process.env.PORT) || 5050;
-// 0.0.0.0 exposes the API to the local network; default keeps it on this machine only
-const HOST = process.env.HOST || '127.0.0.1';
+// 0.0.0.0 is required for Render, Docker, and cloud deployments
+const HOST = process.env.HOST || '0.0.0.0';
 
 const server = app.listen(PORT, HOST, () => {
   console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on http://${HOST}:${PORT}`);
