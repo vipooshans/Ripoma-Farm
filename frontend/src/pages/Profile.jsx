@@ -11,14 +11,10 @@ import RipomaLogo from '../components/RipomaLogo';
 import { formatPrice } from '../utils/currency';
 import { formatSriLankanPhoneInput, isValidSriLankanPhone, normalizeSriLankanPhone, PHONE_FORMAT_ERROR, PHONE_PLACEHOLDER } from '../utils/phone';
 
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
-const isGoogleClientConfigured =
-  Boolean(GOOGLE_CLIENT_ID) &&
-  !GOOGLE_CLIENT_ID.includes('your_google_client_id');
-
-/** JWT uses base64url without padding; browser btoa padding breaks jwt.decode. */
-const toBase64Url = (obj) =>
-  btoa(JSON.stringify(obj)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const GOOGLE_CLIENT_ID =
+  import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+  '140622339758-2ba49uburk22ipo2ik3bri9qklf4b5mh.apps.googleusercontent.com';
+const isGoogleClientConfigured = Boolean(GOOGLE_CLIENT_ID);
 
 const Profile = () => {
   const { user, loading: authLoading, login, register, logout, updateProfile, loginWithGoogle } = useContext(AuthContext);
@@ -145,33 +141,6 @@ const Profile = () => {
       clearTimeout(retryTimer);
     };
   }, [user, isLoginTab, handleGoogleCredentialResponse]);
-
-  const handleSimulateGoogleLogin = async () => {
-    const mockToken = [
-      toBase64Url({ alg: 'HS256', typ: 'JWT' }),
-      toBase64Url({
-        email: 'admin@ripomafarm.com',
-        name: 'Google Admin Developer',
-        picture: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100',
-      }),
-      'signature_placeholder',
-    ].join('.');
-
-    setIsTransitioning(true);
-    setTimeout(async () => {
-      const res = await loginWithGoogle(mockToken);
-      if (res.success) {
-        setTimeout(() => {
-          setIsTransitioning(false);
-          showToast('Logged in with Google Account (Admin Role)!', 'success');
-          if (redirectTarget) navigate(`/${redirectTarget}`);
-        }, 500);
-      } else {
-        setIsTransitioning(false);
-        showToast(res.message, 'error');
-      }
-    }, 600);
-  };
 
   useEffect(() => {
     if (authLoading || !user) return;
@@ -550,30 +519,10 @@ const Profile = () => {
               {isLoginTab && (
                 <div className="mt-6 pt-5 border-t border-gray-200/80 space-y-3">
                   <div className="text-center text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                    Quick Access
+                    Or Sign In With Google
                   </div>
                   
-                  {isGoogleClientConfigured ? (
-                    <div id="google-signin-button" className="w-full flex justify-center" />
-                  ) : (
-                    <p className="text-center text-[10px] text-gray-400">
-                      Set <code className="text-[#2F4B3C]">VITE_GOOGLE_CLIENT_ID</code> in{' '}
-                      <code className="text-[#2F4B3C]">frontend/.env</code> to enable Google Sign-In.
-                    </p>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={handleSimulateGoogleLogin}
-                    className="w-full flex items-center justify-center gap-2 border border-dashed border-[#A65D3D] bg-[#A65D3D]/5 hover:bg-[#A65D3D]/10 text-[#8A6A4B] font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-colors cursor-pointer"
-                  >
-                    🚀 Developer Google Admin Sourcing Bypass
-                  </button>
-
-                  <div className="text-center pt-2">
-                    <span className="text-[10px] text-gray-400 block">Demo Customer Account:</span>
-                    <span className="text-xs text-[#2F4B3C] font-semibold">customer@ripomafarm.com / customer123</span>
-                  </div>
+                  <div id="google-signin-button" className="w-full flex justify-center min-h-[44px]" />
                 </div>
               )}
 
